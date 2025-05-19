@@ -1,0 +1,190 @@
+{% extends 'base.html' %} {% block title %}Métodos Iterativos{% endblock %} {%
+block content %}
+<style>
+  .contenedor {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .botones {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .botones button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: 1px solid #888;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  .area-metodo {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 6px;
+    min-width: 300px;
+  }
+
+  .metodo-formulario {
+    display: none;
+  }
+
+  .metodo-formulario.activo {
+    display: block;
+  }
+</style>
+
+<h2>Capítulo 1 – Selecciona un método iterativo</h2>
+
+<div class="contenedor">
+  <div class="botones">
+    <button onclick="mostrarFormulario('biseccion')">Bisección</button>
+    <button onclick="mostrarFormulario('reglafalsa')">Regla Falsa</button>
+    <button onclick="mostrarFormulario('puntofijo')">Punto Fijo</button>
+    <button onclick="mostrarFormulario('newton')">Newton</button>
+    <button onclick="mostrarFormulario('secante')">Secante</button>
+    <button onclick="mostrarFormulario('raicesmultiples')">
+      Raíces Múltiples
+    </button>
+  </div>
+
+  <div class="area-metodo">
+    <div id="biseccion" class="metodo-formulario {% if metodo_actual == 'biseccion' %}activo{% endif %}">
+      <h3>Bisección</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="biseccion" />
+        <input type="text" name="f_biseccion" placeholder="f(x)" required />
+        <input type="text" name="a" placeholder="a" required />
+        <input type="text" name="b" placeholder="b" required />
+        <input
+          type="text"
+          name="tol"
+          placeholder="Tolerancia (ej: 0.001)"
+          required
+        />
+        <button type="submit">Calcular</button>
+      </form>
+
+      {% if resultado_biseccion %}
+      <h4>Resultado: {{ resultado_biseccion['resultado'] }}</h4>
+      <table border="1">
+        <tr>
+          <th>Iteración</th>
+          <th>xi</th>
+          <th>f(xi)</th>
+          <th>Error</th>
+        </tr>
+        {% for fila in resultado_biseccion['iteraciones'] %}
+        <tr>
+          <td>{{ fila.iter }}</td>
+          <td>{{ fila.xi }}</td>
+          <td>{{ fila.f_xi }}</td>
+          <td>{{ fila.error if fila.error is not none else '---' }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% elif error_biseccion %}
+      <p style="color: red">{{ error_biseccion }}</p>
+      {% endif %}
+    </div>
+
+    <div id="reglafalsa" class="metodo-formulario {% if metodo_actual == 'reglafalsa' %}activo{% endif %}">
+      <h3>Regla Falsa</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="reglafalsa" />
+        <input type="text" name="f_reglafalsa" placeholder="f(x)" />
+        <input type="text" name="a" placeholder="a" />
+        <input type="text" name="b" placeholder="b" />
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <button type="submit">Calcular</button>
+      </form>
+
+      {% if resultado_reglafalsa %}
+      <h4>Resultado: {{ resultado_reglafalsa['resultado'] }}</h4>
+      <table border="1" style="border-collapse: collapse; width: 100%">
+        <thead>
+          <tr>
+            <th>Iteración</th>
+            <th>a</th>
+            <th>b</th>
+            <th>c</th>
+            <th>f(a)</th>
+            <th>f(b)</th>
+            <th>f(c)</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in resultado_reglafalsa['iteraciones'] %}
+          <tr>
+            <td>{{ fila.iter }}</td>
+            <td>{{ '%.6f'|format(fila.a) }}</td>
+            <td>{{ '%.6f'|format(fila.b) }}</td>
+            <td>{{ '%.6f'|format(fila.c) }}</td>
+            <td>{{ '%.6f'|format(fila.f_a) }}</td>
+            <td>{{ '%.6f'|format(fila.f_b) }}</td>
+            <td>{{ '%.6f'|format(fila.f_c) }}</td>
+            <td>{{ fila.error if fila.error is not none else '---' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% elif error_reglafalsa %}
+      <p style="color: red">{{ error_reglafalsa }}</p>
+      {% endif %}
+    </div>
+
+    <div id="puntofijo" class="metodo-formulario">
+      <h3>Punto Fijo</h3>
+      <form method="post">
+        <input type="text" name="g_puntofijo" placeholder="g(x)" />
+        <input type="text" name="x0" placeholder="x0" />
+        <button type="submit">Calcular</button>
+      </form>
+    </div>
+
+    <div id="newton" class="metodo-formulario">
+      <h3>Newton</h3>
+      <form method="post">
+        <input type="text" name="f_newton" placeholder="f(x)" />
+        <input type="text" name="df" placeholder="f'(x)" />
+        <input type="text" name="x0" placeholder="x0" />
+        <button type="submit">Calcular</button>
+      </form>
+    </div>
+
+    <div id="secante" class="metodo-formulario">
+      <h3>Secante</h3>
+      <form method="post">
+        <input type="text" name="f_secante" placeholder="f(x)" />
+        <input type="text" name="x0" placeholder="x0" />
+        <input type="text" name="x1" placeholder="x1" />
+        <button type="submit">Calcular</button>
+      </form>
+    </div>
+
+    <div id="raicesmultiples" class="metodo-formulario">
+      <h3>Raíces Múltiples</h3>
+      <form method="post">
+        <input type="text" name="f_rm" placeholder="f(x)" />
+        <input type="text" name="df_rm" placeholder="f'(x)" />
+        <input type="text" name="ddf_rm" placeholder="f''(x)" />
+        <input type="text" name="x0" placeholder="x0" />
+        <button type="submit">Calcular</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function mostrarFormulario(id) {
+    const formularios = document.querySelectorAll(".metodo-formulario");
+    formularios.forEach((f) => f.classList.remove("activo"));
+    document.getElementById(id).classList.add("activo");
+  }
+</script>
+{% endblock %}
