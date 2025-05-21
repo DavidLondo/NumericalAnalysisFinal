@@ -224,14 +224,45 @@ block content %}
       {% endif %}
     </div>
 
-    <div id="secante" class="metodo-formulario">
+    <div
+      id="secante"
+      class="metodo-formulario {% if metodo_actual == 'secante' %}activo{% endif %}"
+    >
       <h3>Secante</h3>
       <form method="post">
+        <input type="hidden" name="metodo" value="secante" />
         <input type="text" name="f_secante" placeholder="f(x)" />
         <input type="text" name="x0" placeholder="x0" />
         <input type="text" name="x1" placeholder="x1" />
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
         <button type="submit">Calcular</button>
       </form>
+
+      {% if resultado_secante %}
+      <h4>Resultado: {{ resultado_secante['resultado'] }}</h4>
+      <table border="1" style="border-collapse: collapse; width: 100%">
+        <thead>
+          <tr>
+            <th>Iteración</th>
+            <th>Xi</th>
+            <th>f(Xi)</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in resultado_secante['iteraciones'] %}
+          <tr>
+            <td>{{ fila.iter }}</td>
+            <td>{{ '%.6f'|format(fila.Xi) }}</td>
+            <td>{{ '%.6f'|format(fila.f_Xi) }}</td>
+            <td>{{ fila.error if fila.error is not none else '---' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% elif error_secante %}
+      <p style="color: red">{{ error_secante }}</p>
+      {% endif %}
     </div>
 
     <div id="raicesmultiples" class="metodo-formulario">

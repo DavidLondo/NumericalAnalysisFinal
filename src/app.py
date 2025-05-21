@@ -3,6 +3,7 @@ from methods.biseccion import biseccion
 from methods.reglafalsa import regla_falsa
 from methods.puntofijo import punto_fijo
 from methods.newton import newton_raphson
+from methods.secante import secante
 import sympy as sp
 import math
 
@@ -14,7 +15,6 @@ def inicio():
 
 @app.route("/capitulo-1", methods=["GET", "POST"])
 def capitulo_1():
-    # Variables de resultado y error por método
     resultado_biseccion = error_biseccion = None
     resultado_reglafalsa = error_reglafalsa = None
     resultado_puntofijo = error_puntofijo = None
