@@ -138,13 +138,41 @@ block content %}
       {% endif %}
     </div>
 
-    <div id="puntofijo" class="metodo-formulario">
+    <div id="puntofijo" class="metodo-formulario {% if metodo_actual == 'puntofijo' %}activo{% endif %}">
       <h3>Punto Fijo</h3>
       <form method="post">
+        <input type="hidden" name="metodo" value="puntofijo" />
         <input type="text" name="g_puntofijo" placeholder="g(x)" />
         <input type="text" name="x0" placeholder="x0" />
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
         <button type="submit">Calcular</button>
       </form>
+
+      {% if resultado_puntofijo %}
+      <h4>Resultado: {{ resultado_puntofijo['resultado'] }}</h4>
+      <table border="1" style="border-collapse: collapse; width: 100%">
+        <thead>
+          <tr>
+            <th>Iteración</th>
+            <th>Xi</th>
+            <th>f(Xi)</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in resultado_puntofijo['iteraciones'] %}
+          <tr>
+            <td>{{ fila.iter }}</td>
+            <td>{{ '%.6f'|format(fila.xi) }}</td>
+            <td>{{ '%.6f'|format(fila.f_xi) }}</td>
+            <td>{{ fila.error if fila.error is not none else '---' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% elif error_puntofijo %}
+      <p style="color: red">{{ error_puntofijo }}</p>
+      {% endif %}
     </div>
 
     <div id="newton" class="metodo-formulario">

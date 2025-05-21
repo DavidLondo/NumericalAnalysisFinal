@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request
 from methods.biseccion import biseccion
 from methods.reglafalsa import regla_falsa
+from methods.puntofijo import punto_fijo
 import sympy as sp
+import math
 
 app = Flask(__name__)
 
