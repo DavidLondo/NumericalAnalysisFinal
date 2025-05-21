@@ -53,7 +53,10 @@ block content %}
   </div>
 
   <div class="area-metodo">
-    <div id="biseccion" class="metodo-formulario {% if metodo_actual == 'biseccion' %}activo{% endif %}">
+    <div
+      id="biseccion"
+      class="metodo-formulario {% if metodo_actual == 'biseccion' %}activo{% endif %}"
+    >
       <h3>Bisección</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="biseccion" />
@@ -92,7 +95,10 @@ block content %}
       {% endif %}
     </div>
 
-    <div id="reglafalsa" class="metodo-formulario {% if metodo_actual == 'reglafalsa' %}activo{% endif %}">
+    <div
+      id="reglafalsa"
+      class="metodo-formulario {% if metodo_actual == 'reglafalsa' %}activo{% endif %}"
+    >
       <h3>Regla Falsa</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="reglafalsa" />
@@ -138,7 +144,10 @@ block content %}
       {% endif %}
     </div>
 
-    <div id="puntofijo" class="metodo-formulario {% if metodo_actual == 'puntofijo' %}activo{% endif %}">
+    <div
+      id="puntofijo"
+      class="metodo-formulario {% if metodo_actual == 'puntofijo' %}activo{% endif %}"
+    >
       <h3>Punto Fijo</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="puntofijo" />
@@ -175,14 +184,44 @@ block content %}
       {% endif %}
     </div>
 
-    <div id="newton" class="metodo-formulario">
+    <div
+      id="newton"
+      class="metodo-formulario {% if metodo_actual == 'newton' %}activo{% endif %}"
+    >
       <h3>Newton</h3>
       <form method="post">
+        <input type="hidden" name="metodo" value="newton" />
         <input type="text" name="f_newton" placeholder="f(x)" />
-        <input type="text" name="df" placeholder="f'(x)" />
         <input type="text" name="x0" placeholder="x0" />
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
         <button type="submit">Calcular</button>
       </form>
+
+      {% if resultado_newton %}
+      <h4>Resultado: {{ resultado_newton['resultado'] }}</h4>
+      <table border="1" style="border-collapse: collapse; width: 100%">
+        <thead>
+          <tr>
+            <th>Iteración</th>
+            <th>Xi</th>
+            <th>f(Xi)</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in resultado_newton['iteraciones'] %}
+          <tr>
+            <td>{{ fila.iter }}</td>
+            <td>{{ '%.6f'|format(fila.xi) }}</td>
+            <td>{{ '%.6f'|format(fila.f_xi) }}</td>
+            <td>{{ fila.error if fila.error is not none else '---' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% elif error_newton %}
+      <p style="color: red">{{ error_newton }}</p>
+      {% endif %}
     </div>
 
     <div id="secante" class="metodo-formulario">

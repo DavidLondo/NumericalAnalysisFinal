@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from methods.biseccion import biseccion
 from methods.reglafalsa import regla_falsa
 from methods.puntofijo import punto_fijo
+from methods.newton import newton_raphson
 import sympy as sp
 import math
 
@@ -66,10 +67,9 @@ def capitulo_1():
 
             elif metodo == 'newton':
                 fx = request.form.get('f_newton')
-                dfx = request.form.get('df')
                 x0 = float(request.form.get('x0'))
                 tol = float(request.form.get('tol', 0.001))
-                resultado = newton_raphson(fx, dfx, x0, tol)
+                resultado = newton_raphson(fx, x0, tol)
 
                 if 'error' in resultado:
                     error_newton = resultado['error']
