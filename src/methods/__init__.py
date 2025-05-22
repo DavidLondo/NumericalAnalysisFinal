@@ -1,0 +1,8 @@
+from .jacobi import jacobi, calcular_radio_espectral, analizar_convergencia
+from .gauss_seidel import gauss_seidel
+from .sor import sor
+from .biseccion import biseccion
+from .newton import newton_raphson
+from .puntofijo import punto_fijo
+from .reglafalsa import regla_falsa
+from .secante import secante
