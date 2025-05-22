@@ -4,6 +4,7 @@ from methods.reglafalsa import regla_falsa
 from methods.puntofijo import punto_fijo
 from methods.newton import newton_raphson
 from methods.secante import secante
+from methods.raicesmultiples import raices_multiples
 import sympy as sp
 import math
 

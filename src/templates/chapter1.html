@@ -265,15 +265,46 @@ block content %}
       {% endif %}
     </div>
 
-    <div id="raicesmultiples" class="metodo-formulario">
-      <h3>Raíces Múltiples</h3>
+    <div
+      id="raicesmultiples"
+      class="metodo-formulario {% if metodo_actual == 'raicesmultiples' %}activo{% endif %}"
+    >
+      <h3>Raices Multiples</h3>
       <form method="post">
+        <input type="hidden" name="metodo" value="raicesmultiples" />
         <input type="text" name="f_rm" placeholder="f(x)" />
-        <input type="text" name="df_rm" placeholder="f'(x)" />
-        <input type="text" name="ddf_rm" placeholder="f''(x)" />
+        <input type="text" name="df_rm" placeholder="df(x)" />
+        <input type="text" name="ddf_rm" placeholder="ddf(x)" />
         <input type="text" name="x0" placeholder="x0" />
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
         <button type="submit">Calcular</button>
       </form>
+
+      {% if resultado_raicesmultiples %}
+      <h4>Resultado: {{ resultado_raicesmultiples['resultado'] }}</h4>
+      <table border="1" style="border-collapse: collapse; width: 100%">
+        <thead>
+          <tr>
+            <th>Iteración</th>
+            <th>Xi</th>
+            <th>f(Xi)</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in resultado_raicesmultiples['iteraciones'] %}
+          <tr>
+            <td>{{ fila.iter }}</td>
+            <td>{{ '%.6f'|format(fila.Xi) }}</td>
+            <td>{{ '%.6f'|format(fila.f_Xi) }}</td>
+            <td>{{ fila.error if fila.error is not none else '---' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% elif error_raicesmultiples %}
+      <p style="color: red">{{ error_raicesmultiples }}</p>
+      {% endif %}
     </div>
   </div>
 </div>
