@@ -1,11 +1,12 @@
 import math
+import matplotlib.pyplot as plt
+import io
+import base64
 
 def raices_multiples(Fun, derivada_fx1, derivada_fx2, X0, tol, Niter=100):
     """
-    Método de Raíces Múltiples modificado para aceptar funciones complejas
-    pero manteniendo la estructura original.
+    Método de Raíces Múltiples mejorado con generación de gráfica (base64)
     """
-    # Creamos un entorno seguro para eval()
     safe_dict = {
         'sin': math.sin, 'cos': math.cos, 'tan': math.tan,
         'asin': math.asin, 'acos': math.acos, 'atan': math.atan,
@@ -15,7 +16,6 @@ def raices_multiples(Fun, derivada_fx1, derivada_fx2, X0, tol, Niter=100):
         'abs': abs, 'pow': pow, '**': pow
     }
     
-    # Preparamos las funciones para evaluación
     def evaluar(expr, x_val):
         try:
             safe_dict['x'] = x_val
@@ -26,7 +26,8 @@ def raices_multiples(Fun, derivada_fx1, derivada_fx2, X0, tol, Niter=100):
     x = X0
     iteraciones = []
     c = 0
-    
+    x_vals = [x]
+
     try:
         f = evaluar(Fun, x)
         derivada1 = evaluar(derivada_fx1, x)
@@ -41,50 +42,62 @@ def raices_multiples(Fun, derivada_fx1, derivada_fx2, X0, tol, Niter=100):
         })
 
         while c < Niter:
-            try:
-                if abs(f) < tol:
-                    break
-                    
-                if denominador == 0:
-                    return {
-                        "resultado": x,
-                        "iteraciones": iteraciones,
-                        "error": "Denominador cero. El método falló."
-                    }
+            if abs(f) < tol:
+                break
 
-                x_nuevo = x - (f * derivada1) / denominador
-                Error = abs(x_nuevo - x)
-                
-                # Actualizamos valores
-                x = x_nuevo
-                f = evaluar(Fun, x)
-                derivada1 = evaluar(derivada_fx1, x)
-                derivada2 = evaluar(derivada_fx2, x)
-                denominador = derivada1**2 - (f * derivada2)
-                
-                c += 1
-                iteraciones.append({
-                    "iter": c,
-                    "Xi": x,
-                    "f_Xi": f,
-                    "error": Error
-                })
-
-                if Error < tol:
-                    break
-                    
-            except Exception as e:
+            if denominador == 0:
                 return {
                     "resultado": x,
                     "iteraciones": iteraciones,
-                    "error": f"Error en iteración {c}: {str(e)}"
+                    "error": "Denominador cero. El método falló."
                 }
+
+            x_nuevo = x - (f * derivada1) / denominador
+            Error = abs(x_nuevo - x)
+            
+            x = x_nuevo
+            x_vals.append(x)
+
+            f = evaluar(Fun, x)
+            derivada1 = evaluar(derivada_fx1, x)
+            derivada2 = evaluar(derivada_fx2, x)
+            denominador = derivada1**2 - (f * derivada2)
+            
+            c += 1
+            iteraciones.append({
+                "iter": c,
+                "Xi": x,
+                "f_Xi": f,
+                "error": Error
+            })
+
+            if Error < tol:
+                break
+
+        # ----------- GRÁFICA -----------
+        fig, ax = plt.subplots()
+        y_vals = [evaluar(Fun, xi) for xi in x_vals]
+
+        ax.plot(x_vals, y_vals, 'bo-', label='f(xi)')
+        ax.axhline(0, color='gray', linestyle='--')
+        ax.set_title("Raíces Múltiples - f(x) en iteraciones")
+        ax.set_xlabel("xi")
+        ax.set_ylabel("f(xi)")
+        ax.grid(True)
+        ax.legend()
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png")
+        buf.seek(0)
+        image_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close()
 
         return {
             "resultado": x,
-            "iteraciones": iteraciones
+            "iteraciones": iteraciones,
+            "grafica_base64": image_base64
         }
-        
+
     except Exception as e:
         return {
             "error": f"Error inicial: {str(e)}"

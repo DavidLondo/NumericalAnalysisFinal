@@ -146,6 +146,12 @@ block content %}
       </table>
       {% elif error_biseccion %}
       <p style="color: red">{{ error_biseccion }}</p>
+      {% endif %} {% if resultado_biseccion.grafica_base64 %}
+      <h3>Gráfica:</h3>
+      <img
+        src="data:image/png;base64,{{ resultado_biseccion.grafica_base64 }}"
+        alt="Gráfica de la función"
+      />
       {% endif %}
     </div>
 
@@ -210,6 +216,12 @@ block content %}
       </table>
       {% elif error_reglafalsa %}
       <p style="color: red">{{ error_reglafalsa }}</p>
+      {% endif %} {% if resultado_reglafalsa.grafica_base64 %}
+      <h3>Gráfica de f(c):</h3>
+      <img
+        src="data:image/png;base64,{{ resultado_reglafalsa.grafica_base64 }}"
+        alt="Gráfica Regla Falsa"
+      />
       {% endif %}
     </div>
 
@@ -265,6 +277,12 @@ block content %}
       </table>
       {% elif error_puntofijo %}
       <p style="color: red">{{ error_puntofijo }}</p>
+      {% endif %} {% if resultado_puntofijo.grafica_base64 %}
+      <h3>Gráfica:</h3>
+      <img
+        src="data:image/png;base64,{{ resultado_puntofijo.grafica_base64 }}"
+        alt="Gráfica Punto Fijo"
+      />
       {% endif %}
     </div>
 
@@ -320,6 +338,12 @@ block content %}
       </table>
       {% elif error_newton %}
       <p style="color: red">{{ error_newton }}</p>
+      {% endif %} {% if resultado_newton.grafica_base64 %}
+      <h3>Gráfica:</h3>
+      <img
+        src="data:image/png;base64,{{ resultado_newton.grafica_base64 }}"
+        alt="Gráfica Newton-Raphson"
+      />
       {% endif %}
     </div>
 
@@ -376,6 +400,12 @@ block content %}
       </table>
       {% elif error_secante %}
       <p style="color: red">{{ error_secante }}</p>
+      {% endif %} {% if resultado_secante.grafica_base64 %}
+      <h3>Gráfica de f(c):</h3>
+      <img
+        src="data:image/png;base64,{{ resultado_secante.grafica_base64 }}"
+        alt="Gráfica Regla Falsa"
+      />
       {% endif %}
     </div>
 
@@ -433,6 +463,12 @@ block content %}
       </table>
       {% elif error_raicesmultiples %}
       <p style="color: red">{{ error_raicesmultiples }}</p>
+      {% endif %} {% if resultado_raicesmultiples.grafica_base64 %}
+      <h3>Gráfica:</h3>
+      <img
+        src="data:image/png;base64,{{ resultado_raicesmultiples.grafica_base64 }}"
+        alt="Gráfica Raíces Múltiples"
+      />
       {% endif %}
     </div>
   </div>
