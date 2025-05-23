@@ -19,11 +19,20 @@ def capitulo_1():
     def generar_informe_comparativo_raices(fx, gx=None, x0=None, x1=None, a=None, b=None, dfx=None, ddfx=None, tol=0.001):
         resultados = {}
 
-        # Asignación inteligente de parámetros
+        # Asignación inteligente de parámetros con valor por defecto para x1/b
         a_equiv = a if a is not None else x0
         b_equiv = b if b is not None else x1
+        
+        # Si no se proporciona x1 o b, se establece como x0/a + 1
+        if b_equiv is None and a_equiv is not None:
+            b_equiv = a_equiv + 1
+        
         x0_equiv = x0 if x0 is not None else a
         x1_equiv = x1 if x1 is not None else b
+        
+        # Si no se proporciona x1 o b, se establece como x0/a + 1
+        if x1_equiv is None and x0_equiv is not None:
+            x1_equiv = x0_equiv + 1
 
         metodos = {
             "Bisección": lambda: biseccion(fx, a_equiv, b_equiv, tol) if a_equiv is not None and b_equiv is not None else {'error': 'Se requieren a y b (o x0 y x1)'},
@@ -66,7 +75,6 @@ def capitulo_1():
             mejor_nombre = "Ninguno"
 
         return resultados, mejor_nombre
-
 
     # Variables iniciales
     resultado_biseccion = error_biseccion = None
