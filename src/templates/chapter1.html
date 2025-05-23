@@ -53,6 +53,45 @@ block content %}
   </div>
 
   <div class="area-metodo">
+    {% if resultados_comparativos %}
+    <h2>Informe Comparativo de Métodos</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Método</th>
+          <th>Raíz aproximada</th>
+          <th>Iteraciones</th>
+          <th>Error final</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for metodo, datos in resultados_comparativos.items() %}
+        <tr>
+          <td>{{ metodo }}</td>
+          <td>
+            {% if 'solucion' in datos %} {{ datos.solucion|round(6) }} {% else
+            %} - {% endif %}
+          </td>
+          <td>
+            {% if 'iteraciones' in datos %} {{ datos.iteraciones }} {% else %} -
+            {% endif %}
+          </td>
+          <td>
+            {% if 'error_final' in datos and datos.error_final is not none %} {{
+            datos.error_final|round(6) }} {% else %} - {% endif %}
+          </td>
+          <td>
+            {% if 'error' in datos %} {{ datos.error }} {% else %} Éxito {%
+            endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p><strong>Mejor método:</strong> {{ mejor_metodo }}</p>
+    {% endif %}
     <div
       id="biseccion"
       class="metodo-formulario {% if metodo_actual == 'biseccion' %}activo{% endif %}"
@@ -69,6 +108,21 @@ block content %}
           placeholder="Tolerancia (ej: 0.001)"
           required
         />
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="informe_comparativo"
+              {%
+              if
+              informe_comparativo
+              %}checked{%
+              endif
+              %}
+            />
+            Mostrar informe comparativo
+          </label>
+        </div>
         <button type="submit">Calcular</button>
       </form>
 
@@ -106,6 +160,21 @@ block content %}
         <input type="text" name="a" placeholder="a" />
         <input type="text" name="b" placeholder="b" />
         <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="informe_comparativo"
+              {%
+              if
+              informe_comparativo
+              %}checked{%
+              endif
+              %}
+            />
+            Mostrar informe comparativo
+          </label>
+        </div>
         <button type="submit">Calcular</button>
       </form>
 
@@ -154,6 +223,21 @@ block content %}
         <input type="text" name="g_puntofijo" placeholder="g(x)" />
         <input type="text" name="x0" placeholder="x0" />
         <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="informe_comparativo"
+              {%
+              if
+              informe_comparativo
+              %}checked{%
+              endif
+              %}
+            />
+            Mostrar informe comparativo
+          </label>
+        </div>
         <button type="submit">Calcular</button>
       </form>
 
@@ -194,6 +278,21 @@ block content %}
         <input type="text" name="f_newton" placeholder="f(x)" />
         <input type="text" name="x0" placeholder="x0" />
         <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="informe_comparativo"
+              {%
+              if
+              informe_comparativo
+              %}checked{%
+              endif
+              %}
+            />
+            Mostrar informe comparativo
+          </label>
+        </div>
         <button type="submit">Calcular</button>
       </form>
 
@@ -235,6 +334,21 @@ block content %}
         <input type="text" name="x0" placeholder="x0" />
         <input type="text" name="x1" placeholder="x1" />
         <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="informe_comparativo"
+              {%
+              if
+              informe_comparativo
+              %}checked{%
+              endif
+              %}
+            />
+            Mostrar informe comparativo
+          </label>
+        </div>
         <button type="submit">Calcular</button>
       </form>
 
@@ -277,6 +391,21 @@ block content %}
         <input type="text" name="ddf_rm" placeholder="ddf(x)" />
         <input type="text" name="x0" placeholder="x0" />
         <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="informe_comparativo"
+              {%
+              if
+              informe_comparativo
+              %}checked{%
+              endif
+              %}
+            />
+            Mostrar informe comparativo
+          </label>
+        </div>
         <button type="submit">Calcular</button>
       </form>
 
