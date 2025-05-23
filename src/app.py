@@ -19,17 +19,19 @@ def capitulo_1():
     def generar_informe_comparativo_raices(fx, gx=None, x0=None, x1=None, a=None, b=None, dfx=None, ddfx=None, tol=0.001):
         resultados = {}
 
-        # Definimos los valores equivalentes si no se proporcionaron explícitamente
+        # Asignación inteligente de parámetros
+        a_equiv = a if a is not None else x0
+        b_equiv = b if b is not None else x1
         x0_equiv = x0 if x0 is not None else a
         x1_equiv = x1 if x1 is not None else b
 
         metodos = {
-            "Bisección": lambda: biseccion(fx, a, b, tol) if a is not None and b is not None else {'error': 'a o b no proporcionado'},
-            "Regla Falsa": lambda: regla_falsa(fx, a, b, tol) if a is not None and b is not None else {'error': 'a o b no proporcionado'},
-            "Punto Fijo": lambda: punto_fijo(gx, x0_equiv, tol) if gx and x0_equiv is not None else {'error': 'gx o x0 no proporcionado'},
-            "Newton-Raphson": lambda: newton_raphson(fx, x0_equiv, tol) if x0_equiv is not None else {'error': 'x0 no proporcionado'},
-            "Secante": lambda: secante(fx, x0_equiv, x1_equiv, tol) if x0_equiv is not None and x1_equiv is not None else {'error': 'x0 o x1 no proporcionado'},
-            "Raíces Múltiples": lambda: raices_multiples(fx, dfx, ddfx, x0_equiv, tol) if all([dfx, ddfx, x0_equiv]) else {'error': 'Faltan derivadas o x0'}
+            "Bisección": lambda: biseccion(fx, a_equiv, b_equiv, tol) if a_equiv is not None and b_equiv is not None else {'error': 'Se requieren a y b (o x0 y x1)'},
+            "Regla Falsa": lambda: regla_falsa(fx, a_equiv, b_equiv, tol) if a_equiv is not None and b_equiv is not None else {'error': 'Se requieren a y b (o x0 y x1)'},
+            "Punto Fijo": lambda: punto_fijo(gx, x0_equiv, tol) if gx is not None and x0_equiv is not None else {'error': 'Se requieren g(x) y x0 (o a)'},
+            "Newton-Raphson": lambda: newton_raphson(fx, x0_equiv, tol) if x0_equiv is not None else {'error': 'Se requiere x0 (o a)'},
+            "Secante": lambda: secante(fx, x0_equiv, x1_equiv, tol) if x0_equiv is not None and x1_equiv is not None else {'error': 'Se requieren x0 y x1 (o a y b)'},
+            "Raíces Múltiples": lambda: raices_multiples(fx, dfx, ddfx, x0_equiv, tol) if all([dfx, ddfx, x0_equiv is not None]) else {'error': 'Se requieren derivadas y x0 (o a)'}
         }
 
         for nombre, funcion in metodos.items():
@@ -40,12 +42,7 @@ def capitulo_1():
                 else:
                     iteraciones = resultado.get('iteraciones', [])
                     n_iter = len(iteraciones)
-                    
-                    # Manejar diferente formato de error para Regla Falsa
-                    if nombre == "Regla Falsa":
-                        error_final = iteraciones[-1]["error"] if iteraciones else None
-                    else:
-                        error_final = iteraciones[-1]["error"] if iteraciones else None
+                    error_final = iteraciones[-1]["error"] if iteraciones and "error" in iteraciones[-1] else None
                     
                     resultados[nombre] = {
                         'solucion': resultado['resultado'],
