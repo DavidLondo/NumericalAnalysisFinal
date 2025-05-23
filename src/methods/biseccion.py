@@ -19,6 +19,7 @@ def biseccion(fx, a, b, tol, iteramax=100):
         
         resultados = []
         xi_list = []
+        errores = []
 
         # Verificación de continuidad y valores definidos
         puntos_prueba = np.linspace(a, b, 50)
@@ -50,6 +51,7 @@ def biseccion(fx, a, b, tol, iteramax=100):
             # Calcular error relativo
             if x_ant is not None:
                 error = abs(xi - x_ant)
+                errores.append(error)
             else:
                 error = None
 
@@ -82,25 +84,38 @@ def biseccion(fx, a, b, tol, iteramax=100):
                 "iteraciones_realizadas": i-1
             }
 
-        # ----------- GENERAR GRÁFICA -----------
-        fig, ax = plt.subplots()
+        # ----------- GENERAR GRÁFICAS -----------
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+        # Gráfica de f(x) y aproximación
         x_vals = np.linspace(float(a)-1, float(b)+1, 400)
         try:
             y_vals = f(x_vals)
-            ax.plot(x_vals, y_vals, label='f(x)', color='blue')
+            ax1.plot(x_vals, y_vals, label='f(x)', color='blue')
         except Exception:
-            ax.text(0.5, 0.5, "No se pudo graficar f(x)", horizontalalignment='center')
-
-        ax.axhline(0, color='black', linewidth=0.5)
-        ax.axvline(xi, color='red', linestyle='--', label='Raíz Aproximada')
-        ax.set_title('Gráfica de f(x) y aproximación con Bisección')
-        ax.set_xlabel('x')
-        ax.set_ylabel('f(x)')
-        ax.legend()
-        ax.grid(True)
-
+            ax1.text(0.5, 0.5, "No se pudo graficar f(x)", horizontalalignment='center')
+        ax1.axhline(0, color='black', linewidth=0.5)
+        ax1.axvline(xi, color='red', linestyle='--', label='Raíz Aproximada')
+        ax1.set_title('f(x) y raíz con Bisección')
+        ax1.set_xlabel('x')
+        ax1.set_ylabel('f(x)')
+        ax1.legend()
+        ax1.grid(True)
         for xi_i in xi_list:
-            ax.axvline(xi_i, color='orange', linestyle=':', linewidth=0.8)
+            ax1.axvline(xi_i, color='orange', linestyle=':', linewidth=0.8)
+
+        # Gráfica de convergencia del error (logarítmica)
+        if errores:
+            ax2.semilogy(range(1, len(errores)+1), errores, 'g-', marker='o')
+            ax2.set_title('Convergencia del Error')
+            ax2.set_xlabel('Iteración')
+            ax2.set_ylabel('Error (escala log)')
+            ax2.grid(True)
+        else:
+            ax2.text(0.5, 0.5, "No hay errores calculados para graficar", horizontalalignment='center')
+            ax2.set_axis_off()
+
+        plt.tight_layout()
 
         buf = io.BytesIO()
         plt.savefig(buf, format="png")

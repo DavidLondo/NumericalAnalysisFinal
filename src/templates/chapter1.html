@@ -53,45 +53,61 @@ block content %}
   </div>
 
   <div class="area-metodo">
-    {% if resultados_comparativos %}
-    <h2>Informe Comparativo de Métodos</h2>
-    <table border="1">
-      <thead>
-        <tr>
-          <th>Método</th>
-          <th>Raíz aproximada</th>
-          <th>Iteraciones</th>
-          <th>Error final</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for metodo, datos in resultados_comparativos.items() %}
-        <tr>
-          <td>{{ metodo }}</td>
-          <td>
-            {% if 'solucion' in datos %} {{ datos.solucion|round(6) }} {% else
-            %} - {% endif %}
-          </td>
-          <td>
-            {% if 'iteraciones' in datos %} {{ datos.iteraciones }} {% else %} -
-            {% endif %}
-          </td>
-          <td>
-            {% if 'error_final' in datos and datos.error_final is not none %} {{
-            datos.error_final|round(6) }} {% else %} - {% endif %}
-          </td>
-          <td>
-            {% if 'error' in datos %} {{ datos.error }} {% else %} Éxito {%
-            endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <section>
+      <h2>Guía para usar los métodos numéricos</h2>
+      <h3>1. Cómo ingresar funciones matemáticas</h3>
+      <p>
+        Las funciones deben ser escritas en formato
+        <strong>string</strong> usando la variable <code>x</code>. Puedes usar
+        funciones especiales matemáticas que el sistema reconoce, como:
+      </p>
 
-    <p><strong>Mejor método:</strong> {{ mejor_metodo }}</p>
-    {% endif %}
+      <ul>
+        <li><code>sin(x)</code>, <code>cos(x)</code>, <code>tan(x)</code></li>
+        <li>
+          <code>asin(x)</code>, <code>acos(x)</code>, <code>atan(x)</code>
+        </li>
+        <li>
+          <code>sinh(x)</code>, <code>cosh(x)</code>, <code>tanh(x)</code>
+        </li>
+        <li><code>exp(x)</code> para <em>e</em><sup>x</sup></li>
+        <li><code>log(x)</code> para logaritmo natural (base <em>e</em>)</li>
+        <li><code>log10(x)</code> para logaritmo base 10</li>
+        <li><code>sqrt(x)</code> para raíz cuadrada</li>
+        <li><code>abs(x)</code> para valor absoluto</li>
+        <li>
+          Operadores básicos: suma <code>+</code>, resta <code>-</code>,
+          multiplicación <code>*</code>, división <code>/</code>, potencia
+          <code>**</code>
+        </li>
+        <li>Constantes matemáticas: <code>pi</code>, <code>e</code></li>
+      </ul>
+
+      <p>
+        <strong>Ejemplo de función:</strong>
+        <code>sin(x) - 0.5*x**2 + sqrt(x)</code>
+      </p>
+      <h3>2. Errores comunes y consejos</h3>
+      <ul>
+        <li>
+          Asegúrate de que la función y sus derivadas sean continuas y estén
+          definidas en el intervalo de interés.
+        </li>
+        <li>
+          Evita puntos iniciales donde la función o derivadas se anulen o el
+          denominador sea cero, porque puede causar inestabilidad.
+        </li>
+        <li>
+          Usa valores razonables para la tolerancia (no demasiado pequeños para
+          evitar ejecuciones largas).
+        </li>
+        <li>
+          Si recibes un error de evaluación, revisa la sintaxis y que uses solo
+          las funciones soportadas.
+        </li>
+      </ul>
+    </section>
+
     <div
       id="biseccion"
       class="metodo-formulario {% if metodo_actual == 'biseccion' %}activo{% endif %}"
@@ -100,15 +116,20 @@ block content %}
       <form method="post">
         <input type="hidden" name="metodo" value="biseccion" />
         <input type="text" name="f_biseccion" placeholder="f(x)" required />
-        <input type="text" name="a" placeholder="a" required />
-        <input type="text" name="b" placeholder="b" required />
+        <input type="text" name="a" placeholder="x0" required />
+        <input type="text" name="b" placeholder="x1" required />
         <input
-        type="text"
-        name="tol"
-        placeholder="Tolerancia (ej: 0.001)"
-        required
+          type="text"
+          name="tol"
+          placeholder="Tolerancia (ej: 0.001)"
+          required
         />
-        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
+        <input
+          type="text"
+          name="iter"
+          placeholder="Máximo de iteraciónes"
+          required
+        />
         <div>
           <label>
             <input
@@ -163,11 +184,21 @@ block content %}
       <h3>Regla Falsa</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="reglafalsa" />
-        <input type="text" name="f_reglafalsa" placeholder="f(x)" required/>
-        <input type="text" name="a" placeholder="a" required/>
-        <input type="text" name="b" placeholder="b" required/>
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
-        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
+        <input type="text" name="f_reglafalsa" placeholder="f(x)" required />
+        <input type="text" name="a" placeholder="x0" required />
+        <input type="text" name="b" placeholder="x1" required />
+        <input
+          type="text"
+          name="tol"
+          placeholder="Tolerancia (ej: 0.001)"
+          required
+        />
+        <input
+          type="text"
+          name="iter"
+          placeholder="Máximo de iteraciónes"
+          required
+        />
         <div>
           <label>
             <input
@@ -234,10 +265,20 @@ block content %}
       <h3>Punto Fijo</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="puntofijo" />
-        <input type="text" name="g_puntofijo" placeholder="g(x)" required/>
-        <input type="text" name="x0" placeholder="x0" required/>
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
-        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
+        <input type="text" name="g_puntofijo" placeholder="g(x)" required />
+        <input type="text" name="x0" placeholder="x0" required />
+        <input
+          type="text"
+          name="tol"
+          placeholder="Tolerancia (ej: 0.001)"
+          required
+        />
+        <input
+          type="text"
+          name="iter"
+          placeholder="Máximo de iteraciónes"
+          required
+        />
         <div>
           <label>
             <input
@@ -296,10 +337,20 @@ block content %}
       <h3>Newton</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="newton" />
-        <input type="text" name="f_newton" placeholder="f(x)" required/>
-        <input type="text" name="x0" placeholder="x0" required/>
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
-        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
+        <input type="text" name="f_newton" placeholder="f(x)" required />
+        <input type="text" name="x0" placeholder="x0" required />
+        <input
+          type="text"
+          name="tol"
+          placeholder="Tolerancia (ej: 0.001)"
+          required
+        />
+        <input
+          type="text"
+          name="iter"
+          placeholder="Máximo de iteraciónes"
+          required
+        />
         <div>
           <label>
             <input
@@ -358,11 +409,21 @@ block content %}
       <h3>Secante</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="secante" />
-        <input type="text" name="f_secante" placeholder="f(x)" required/>
-        <input type="text" name="x0" placeholder="x0" required/>
-        <input type="text" name="x1" placeholder="x1" required/>
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
-        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
+        <input type="text" name="f_secante" placeholder="f(x)" required />
+        <input type="text" name="x0" placeholder="x0" required />
+        <input type="text" name="x1" placeholder="x1" required />
+        <input
+          type="text"
+          name="tol"
+          placeholder="Tolerancia (ej: 0.001)"
+          required
+        />
+        <input
+          type="text"
+          name="iter"
+          placeholder="Máximo de iteraciónes"
+          required
+        />
         <div>
           <label>
             <input
@@ -421,12 +482,22 @@ block content %}
       <h3>Raices Multiples</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="raicesmultiples" />
-        <input type="text" name="f_rm" placeholder="f(x)" required/>
-        <input type="text" name="df_rm" placeholder="df(x)" required/>
-        <input type="text" name="ddf_rm" placeholder="ddf(x)" required/>
-        <input type="text" name="x0" placeholder="x0" required/>
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
-        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
+        <input type="text" name="f_rm" placeholder="f(x)" required />
+        <input type="text" name="df_rm" placeholder="df(x)" required />
+        <input type="text" name="ddf_rm" placeholder="ddf(x)" required />
+        <input type="text" name="x0" placeholder="x0" required />
+        <input
+          type="text"
+          name="tol"
+          placeholder="Tolerancia (ej: 0.001)"
+          required
+        />
+        <input
+          type="text"
+          name="iter"
+          placeholder="Máximo de iteraciónes"
+          required
+        />
         <div>
           <label>
             <input
@@ -477,6 +548,45 @@ block content %}
       />
       {% endif %}
     </div>
+    {% if resultados_comparativos %}
+    <h2>Informe Comparativo de Métodos</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Método</th>
+          <th>Raíz aproximada</th>
+          <th>Iteraciones</th>
+          <th>Error final</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for metodo, datos in resultados_comparativos.items() %}
+        <tr>
+          <td>{{ metodo }}</td>
+          <td>
+            {% if 'solucion' in datos %} {{ datos.solucion|round(6) }} {% else
+            %} - {% endif %}
+          </td>
+          <td>
+            {% if 'iteraciones' in datos %} {{ datos.iteraciones }} {% else %} -
+            {% endif %}
+          </td>
+          <td>
+            {% if 'error_final' in datos and datos.error_final is not none %} {{
+            datos.error_final|round(6) }} {% else %} - {% endif %}
+          </td>
+          <td>
+            {% if 'error' in datos %} {{ datos.error }} {% else %} Éxito {%
+            endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p><strong>Mejor método:</strong> {{ mejor_metodo }}</p>
+    {% endif %}
   </div>
 </div>
 
