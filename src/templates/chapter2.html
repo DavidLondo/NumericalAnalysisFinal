@@ -1,9 +1,228 @@
-<!-- templates/home.html -->
 {% extends 'base.html' %}
 
-{% block title %}Capítulo 2{% endblock %}
+{% block title %}Capítulo 2 – Sistemas de Ecuaciones Lineales{% endblock %}
 
 {% block content %}
-    <h2>Capítulo 2</h2>
+<style>
+  .contenedor {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
 
+  .botones {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .botones button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: 1px solid #888;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  .area-metodo {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 6px;
+    min-width: 300px;
+  }
+
+  .metodo-formulario {
+    display: none;
+  }
+
+  .metodo-formulario.activo {
+    display: block;
+  }
+</style>
+
+<h2>Capítulo 2 – Selecciona un método para sistemas de ecuaciones lineales</h2>
+
+<div class="contenedor">
+  <div class="botones">
+    <button onclick="mostrarFormulario('jacobi')">Jacobi</button>
+    <button onclick="mostrarFormulario('gaussseidel')">Gauss-Seidel</button>
+    <button onclick="mostrarFormulario('sor')">SOR</button>
+  </div>
+
+  <div class="area-metodo">
+    <!-- Informe -->
+    {% if informe %}
+      <h3>Informe Comparativo</h3>
+      <table border="1">
+        <tr>
+          <th>Método</th>
+          <th>Iteraciones</th>
+          <th>Error final</th>
+          <th>¿Convergió?</th>
+        </tr>
+        {% for metodo, datos in informe.items() %}
+          <tr>
+            <td>{{ metodo }}</td>
+            {% if datos.error %}
+              <td colspan="3" style="color:red;">{{ datos.error }}</td>
+            {% else %}
+              <td>{{ datos.iteraciones }}</td>
+              <td>{{ datos.error_final }}</td>
+              <td>{{ 'Sí' if datos.iteraciones < 100 else 'Probablemente no' }}</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </table>
+      <p><strong>Mejor método:</strong> {{ mejor_metodo }}</p>
+    {% endif %}
+    
+    <!-- Explicacion -->
+    <div style="border:1px solid #ccc; padding:1rem; background:#f9f9f9; margin-bottom:1rem;">
+      <h4>¿Cómo ingresar los datos?</h4>
+      <ul>
+        <li><strong>Matriz A:</strong> Usa formato de lista de listas. Ejemplo: <code>[[4,-1,0],[-1,4,-1],[0,-1,3]]</code></li>
+        <li><strong>Vector b:</strong> Lista de números. Ejemplo: <code>[15,10,10]</code></li>
+        <li><strong>Vector x0:</strong> Lista de valores iniciales. Ejemplo: <code>[0,0,0]</code></li>
+        <li><strong>Tolerancia:</strong> Un número pequeño como <code>0.001</code></li>
+        <li><strong>ω (SOR):</strong> Número entre 1 y 2. Ejemplo: <code>1.1</code></li>
+      </ul>
+    </div>
+
+    <!-- JACOBI -->
+    <div id="jacobi" class="metodo-formulario {% if metodo_actual == 'jacobi' %}activo{% endif %}">
+      <h3>Jacobi</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="jacobi" />
+        <textarea name="matriz" placeholder="Matriz A (ej: [[4,-1,0],[-1,4,-1],[0,-1,3]])" required rows="3" style="width:100%;"></textarea>
+        <input type="text" name="vector_b" placeholder="Vector b (ej: [15,10,10])" required />
+        <input type="text" name="x0" placeholder="Vector x0 (ej: [0,0,0])" required />
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required />
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe"> Generar informe comparativo
+      </form>
+
+      {% if resultado_jacobi %}
+      <h4>Resultado: {{ resultado_jacobi['solucion'] }}</h4>
+        {% if radio_espectral is defined %}
+          <p><strong>Radio espectral:</strong> {{ radio_espectral }}</p>
+          {% if puede_converger %}
+            <p style="color: green"><strong>Este método puede converger.</strong></p>
+          {% else %}
+            <p style="color: red"><strong>Este método probablemente NO convergerá.</strong></p>
+          {% endif %}
+        {% endif %}
+      <table border="1">
+        <tr>
+          <th>Iteración</th>
+          <th>Xi</th>
+          <th>Error</th>
+        </tr>
+        {% for fila in resultado_jacobi['iteraciones'] %}
+        <tr>
+          <td>{{ fila[0] }}</td>
+          <td>{{ fila[1] }}</td>
+          <td>{{ fila[2] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% elif error_jacobi %}
+      <p style="color: red">{{ error_jacobi }}</p>
+      {% endif %}
+    </div>
+
+    <!-- GAUSS-SEIDEL -->
+    <div id="gaussseidel" class="metodo-formulario {% if metodo_actual == 'gaussseidel' %}activo{% endif %}">
+      <h3>Gauss-Seidel</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="gaussseidel" />
+        <textarea name="matriz" placeholder="Matriz A (ej: [[4,-1,0],[-1,4,-1],[0,-1,3]])" required rows="3" style="width:100%;"></textarea>
+        <input type="text" name="vector_b" placeholder="Vector b (ej: [15,10,10])" required />
+        <input type="text" name="x0" placeholder="Vector x0 (ej: [0,0,0])" required />
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required />
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe"> Generar informe comparativo
+      </form>
+
+      {% if resultado_gauss %}
+      <h4>Resultado: {{ resultado_gauss['solucion'] }}</h4>
+        {% if radio_espectral is defined %}
+          <p><strong>Radio espectral:</strong> {{ radio_espectral }}</p>
+          {% if puede_converger %}
+            <p style="color: green"><strong>Este método puede converger.</strong></p>
+          {% else %}
+            <p style="color: red"><strong>Este método probablemente NO convergerá.</strong></p>
+          {% endif %}
+        {% endif %}
+      <table border="1">
+        <tr>
+          <th>Iteración</th>
+          <th>Xi</th>
+          <th>Error</th>
+        </tr>
+        {% for fila in resultado_gauss['iteraciones'] %}
+        <tr>
+          <td>{{ fila[0] }}</td>
+          <td>{{ fila[1] }}</td>
+          <td>{{ fila[2] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% elif error_gaussseidel %}
+      <p style="color: red">{{ error_gaussseidel }}</p>
+      {% endif %}
+    </div>
+
+    <!-- SOR -->
+    <div id="sor" class="metodo-formulario {% if metodo_actual == 'sor' %}activo{% endif %}">
+      <h3>SOR (Successive Over-Relaxation)</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="sor" />
+        <textarea name="matriz" placeholder="Matriz A (ej: [[4,-1,0],[-1,4,-1],[0,-1,3]])" required rows="3" style="width:100%;"></textarea>
+        <input type="text" name="vector_b" placeholder="Vector b (ej: [15,10,10])" required />
+        <input type="text" name="x0" placeholder="Vector x0 (ej: [0,0,0])" required />
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required />
+        <input type="text" name="w" placeholder="Factor de relajación (ω)" required />
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe"> Generar informe comparativo
+      </form>
+
+      {% if resultado_sor %}
+      <h4>Resultado: {{ resultado_sor['solucion'] }}</h4>
+        {% if radio_espectral is defined %}
+          <p><strong>Radio espectral:</strong> {{ radio_espectral }}</p>
+          {% if puede_converger %}
+            <p style="color: green"><strong>Este método puede converger.</strong></p>
+          {% else %}
+            <p style="color: red"><strong>Este método probablemente NO convergerá.</strong></p>
+          {% endif %}
+        {% endif %}
+      <table border="1">
+        <tr>
+          <th>Iteración</th>
+          <th>Xi</th>
+          <th>Error</th>
+        </tr>
+        {% for fila in resultado_sor['iteraciones'] %}
+        <tr>
+          <td>{{ fila[0] }}</td>
+          <td>{{ fila[1] }}</td>
+          <td>{{ fila[2] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% elif error_sor %}
+      <p style="color: red">{{ error_sor }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  function mostrarFormulario(id) {
+    const formularios = document.querySelectorAll(".metodo-formulario");
+    formularios.forEach(f => f.classList.remove("activo"));
+    document.getElementById(id).classList.add("activo");
+  }
+</script>
 {% endblock %}
