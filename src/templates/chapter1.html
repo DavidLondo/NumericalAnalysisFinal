@@ -103,11 +103,12 @@ block content %}
         <input type="text" name="a" placeholder="a" required />
         <input type="text" name="b" placeholder="b" required />
         <input
-          type="text"
-          name="tol"
-          placeholder="Tolerancia (ej: 0.001)"
-          required
+        type="text"
+        name="tol"
+        placeholder="Tolerancia (ej: 0.001)"
+        required
         />
+        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
         <div>
           <label>
             <input
@@ -162,10 +163,11 @@ block content %}
       <h3>Regla Falsa</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="reglafalsa" />
-        <input type="text" name="f_reglafalsa" placeholder="f(x)" />
-        <input type="text" name="a" placeholder="a" />
-        <input type="text" name="b" placeholder="b" />
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <input type="text" name="f_reglafalsa" placeholder="f(x)" required/>
+        <input type="text" name="a" placeholder="a" required/>
+        <input type="text" name="b" placeholder="b" required/>
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
+        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
         <div>
           <label>
             <input
@@ -232,9 +234,10 @@ block content %}
       <h3>Punto Fijo</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="puntofijo" />
-        <input type="text" name="g_puntofijo" placeholder="g(x)" />
-        <input type="text" name="x0" placeholder="x0" />
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <input type="text" name="g_puntofijo" placeholder="g(x)" required/>
+        <input type="text" name="x0" placeholder="x0" required/>
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
+        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
         <div>
           <label>
             <input
@@ -293,9 +296,10 @@ block content %}
       <h3>Newton</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="newton" />
-        <input type="text" name="f_newton" placeholder="f(x)" />
-        <input type="text" name="x0" placeholder="x0" />
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <input type="text" name="f_newton" placeholder="f(x)" required/>
+        <input type="text" name="x0" placeholder="x0" required/>
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
+        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
         <div>
           <label>
             <input
@@ -354,10 +358,11 @@ block content %}
       <h3>Secante</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="secante" />
-        <input type="text" name="f_secante" placeholder="f(x)" />
-        <input type="text" name="x0" placeholder="x0" />
-        <input type="text" name="x1" placeholder="x1" />
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <input type="text" name="f_secante" placeholder="f(x)" required/>
+        <input type="text" name="x0" placeholder="x0" required/>
+        <input type="text" name="x1" placeholder="x1" required/>
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
+        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
         <div>
           <label>
             <input
@@ -416,11 +421,12 @@ block content %}
       <h3>Raices Multiples</h3>
       <form method="post">
         <input type="hidden" name="metodo" value="raicesmultiples" />
-        <input type="text" name="f_rm" placeholder="f(x)" />
-        <input type="text" name="df_rm" placeholder="df(x)" />
-        <input type="text" name="ddf_rm" placeholder="ddf(x)" />
-        <input type="text" name="x0" placeholder="x0" />
-        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" />
+        <input type="text" name="f_rm" placeholder="f(x)" required/>
+        <input type="text" name="df_rm" placeholder="df(x)" required/>
+        <input type="text" name="ddf_rm" placeholder="ddf(x)" required/>
+        <input type="text" name="x0" placeholder="x0" required/>
+        <input type="text" name="tol" placeholder="Tolerancia (ej: 0.001)" required/>
+        <input type="text" name="iter" placeholder="Máximo de iteraciónes" required/>
         <div>
           <label>
             <input

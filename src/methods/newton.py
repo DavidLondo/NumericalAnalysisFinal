@@ -6,20 +6,33 @@ import base64
 
 def newton_raphson(fx_str, x0, tol, iteramax=100):
     """
-    Método de Newton-Raphson mejorado con generación de gráfica
-    
+    Método de Newton-Raphson mejorado con manejo robusto de convergencia y validaciones.
+
     Args:
-        fx_str: Función como string (ej: "cos(x)*exp(-x)")
-        x0: Punto inicial
-        tol: Tolerancia
-        iteramax: Máximo de iteraciones (default 100)
+        fx_str (str): Función como string, ej: "cos(x)*exp(-x)"
+        x0 (float): Punto inicial
+        tol (float): Tolerancia para el criterio de parada
+        iteramax (int): Máximo número de iteraciones permitidas
+
+    Returns:
+        dict: {
+            resultado: valor aproximado de la raíz (si converge),
+            iteraciones: lista con detalles de cada iteración,
+            grafica_base64: imagen en base64 (si converge),
+            error: mensaje de error o advertencia,
+            ultimo_valor: última aproximación calculada,
+            convergencia: bool que indica si hubo convergencia,
+            advertencia: mensaje adicional para el usuario (si aplica)
+        }
     """
     x = sp.symbols('x')
     
     try:
+        # Parsear función y derivada
         fx = sp.sympify(fx_str)
         dfx = sp.diff(fx, x)
-        
+
+        # Funciones numéricas
         f = sp.lambdify(x, fx, modules=[
             'numpy',
             {
@@ -31,72 +44,115 @@ def newton_raphson(fx_str, x0, tol, iteramax=100):
                 'sec': lambda x: 1/np.cos(x), 'csc': lambda x: 1/np.sin(x)
             }
         ])
-        
         df = sp.lambdify(x, dfx, modules='numpy')
 
+        # Validaciones previas para continuidad (intentar evaluar función y derivada en puntos cercanos)
         try:
-            test_val = f(x0)
-            if np.isnan(test_val):
-                return {"error": f"La función no está definida en x0 = {x0}"}
+            test_points = [x0, x0 + tol, x0 - tol]
+            for pt in test_points:
+                val_f = f(pt)
+                val_df = df(pt)
+                if np.isnan(val_f) or np.isnan(val_df):
+                    return {
+                        "error": f"La función o su derivada no está definida cerca de x = {pt:.6f}",
+                        "convergencia": False
+                    }
         except Exception as e:
-            return {"error": f"Error al evaluar función en x0: {str(e)}"}
+            return {
+                "error": f"Error al evaluar función o derivada cerca de x0: {str(e)}",
+                "convergencia": False
+            }
 
         iteraciones = []
         xi = x0
-        xi_list = []
+        convergencia = False
+        error = None
 
         for i in range(1, iteramax + 1):
-            fxi = f(xi)
-            dfxi = df(xi)
+            try:
+                fxi = f(xi)
+                dfxi = df(xi)
 
-            if np.isnan(fxi) or np.isnan(dfxi):
-                return {"error": f"Función o derivada no definida en iteración {i}, x = {xi:.6f}",
-                        "iteraciones": iteraciones}
+                if np.isnan(fxi) or np.isnan(dfxi):
+                    return {
+                        "error": f"Función o derivada no definida en iteración {i}, x = {xi:.6f}",
+                        "iteraciones": iteraciones,
+                        "ultimo_valor": xi,
+                        "convergencia": False
+                    }
 
-            if dfxi == 0:
-                return {"error": f"Derivada cero en iteración {i}. Método falló.",
-                        "iteraciones": iteraciones}
+                if abs(dfxi) < 1e-12:
+                    return {
+                        "error": f"Derivada cercana a cero en iteración {i}. Método no puede continuar.",
+                        "iteraciones": iteraciones,
+                        "ultimo_valor": xi,
+                        "convergencia": False
+                    }
 
-            xi_new = xi - fxi / dfxi
-            error = abs(xi_new - xi)
+                xi_new = xi - fxi / dfxi
+                error = abs(xi_new - xi)
 
-            iteraciones.append({
-                "iter": i,
-                "xi": xi,
-                "f_xi": fxi,
-                "df_xi": dfxi,
-                "error": error if i > 1 else None
-            })
-            xi_list.append(xi)
+                iteraciones.append({
+                    "iter": i,
+                    "xi": xi,
+                    "f_xi": fxi,
+                    "df_xi": dfxi,
+                    "error": error if i > 1 else None
+                })
 
-            if error < tol:
-                break
+                if error < tol:
+                    convergencia = True
+                    xi = xi_new
+                    break
 
-            xi = xi_new
+                xi = xi_new
 
-        # ----------- GENERAR GRÁFICA -----------
-        fig, ax = plt.subplots()
+            except Exception as e:
+                return {
+                    "error": f"Error en iteración {i}: {str(e)}",
+                    "iteraciones": iteraciones,
+                    "ultimo_valor": xi,
+                    "convergencia": False
+                }
+
+        if not convergencia:
+            return {
+                "error": f"No se alcanzó la convergencia en {iteramax} iteraciones. Último error: {error:.6e}",
+                "ultimo_valor": xi,
+                "iteraciones_realizadas": i,
+                "iteraciones": iteraciones,
+                "convergencia": False
+            }
+
+        # Generar gráfica solo si hubo convergencia
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
         
-        # Rango centrado en x0 (más +/- 5 unidades)
         rango = max(5, abs(x0)*1.5)
         x_vals = np.linspace(x0 - rango, x0 + rango, 400)
         y_vals = f(x_vals)
+
+        ax1.plot(x_vals, y_vals, label='f(x)', color='blue')
+        ax1.axhline(0, color='black', linewidth=0.5)
+        ax1.axvline(xi, color='red', linestyle='--', label='Raíz Aproximada')
+        ax1.set_title('Función y aproximaciones')
+        ax1.set_xlabel('x')
+        ax1.set_ylabel('f(x)')
+        ax1.grid(True)
+
+        for it in iteraciones:
+            ax1.plot(it["xi"], it["f_xi"], 'ro', markersize=4)
+        ax1.legend()
+
+        errores = [it['error'] for it in iteraciones if it['error'] is not None]
+        if errores:
+            ax2.semilogy(range(1, len(errores)+1), errores, 'g-', marker='o')
+            ax2.set_title('Convergencia del Error')
+            ax2.set_xlabel('Iteración')
+            ax2.set_ylabel('Error (escala log)')
+            ax2.grid(True)
         
-        ax.plot(x_vals, y_vals, label='f(x)', color='blue')
-        ax.axhline(0, color='black', linewidth=0.5)
-        ax.axvline(xi, color='red', linestyle='--', label='Raíz Aproximada')
-        ax.set_title('Gráfica de f(x) con Newton-Raphson')
-        ax.set_xlabel('x')
-        ax.set_ylabel('f(x)')
-        ax.grid(True)
+        plt.tight_layout()
 
-        # Puntos de las iteraciones
-        for xi_i in xi_list:
-            ax.plot(xi_i, f(xi_i), 'ro', markersize=4)
-
-        ax.legend()
-
-        # Convertir a imagen base64
         buf = io.BytesIO()
         plt.savefig(buf, format="png")
         buf.seek(0)
@@ -106,10 +162,19 @@ def newton_raphson(fx_str, x0, tol, iteramax=100):
         return {
             "resultado": xi,
             "iteraciones": iteraciones,
-            "grafica_base64": image_base64
+            "grafica_base64": image_base64,
+            "convergencia": True,
+            "iteraciones_totales": i,
+            "advertencia": None
         }
 
     except sp.SympifyError:
-        return {"error": "Expresión no válida. Ejemplos: 'x*tan(x)-1', 'exp(-x)-cos(x)'"}
+        return {
+            "error": "Expresión no válida. Ejemplos: 'x*tan(x)-1', 'exp(-x)-cos(x)'",
+            "convergencia": False
+        }
     except Exception as e:
-        return {"error": f"Error inesperado: {str(e)}"}
+        return {
+            "error": f"Error inesperado: {str(e)}",
+            "convergencia": False
+        }

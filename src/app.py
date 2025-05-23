@@ -93,7 +93,8 @@ def capitulo_1():
                 a = float(request.form.get('a'))
                 b = float(request.form.get('b'))
                 tol = float(request.form.get('tol', 0.001))
-                resultado = biseccion(fx, a, b, tol)
+                itera = int(request.form.get('iter', 100))
+                resultado = biseccion(fx, a, b, tol, itera)
                 resultado_biseccion = resultado if 'error' not in resultado else None
                 error_biseccion = resultado.get('error')
 
@@ -102,7 +103,8 @@ def capitulo_1():
                 a = float(request.form.get('a'))
                 b = float(request.form.get('b'))
                 tol = float(request.form.get('tol', 0.001))
-                resultado = regla_falsa(fx, a, b, tol)
+                itera = int(request.form.get('iter', 100))
+                resultado = regla_falsa(fx, a, b, tol, itera)
                 resultado_reglafalsa = resultado if 'error' not in resultado else None
                 error_reglafalsa = resultado.get('error')
 
@@ -110,7 +112,8 @@ def capitulo_1():
                 gx = request.form.get('g_puntofijo')
                 x0 = float(request.form.get('x0'))
                 tol = float(request.form.get('tol', 0.001))
-                resultado = punto_fijo(gx, x0, tol)
+                itera = int(request.form.get('iter', 100))
+                resultado = punto_fijo(gx, x0, tol, itera)
                 resultado_puntofijo = resultado if 'error' not in resultado else None
                 error_puntofijo = resultado.get('error')
 
@@ -118,7 +121,8 @@ def capitulo_1():
                 fx = request.form.get('f_newton')
                 x0 = float(request.form.get('x0'))
                 tol = float(request.form.get('tol', 0.001))
-                resultado = newton_raphson(fx, x0, tol)
+                itera = int(request.form.get('iter', 100))
+                resultado = newton_raphson(fx, x0, tol, itera)
                 resultado_newton = resultado if 'error' not in resultado else None
                 error_newton = resultado.get('error')
 
@@ -127,7 +131,8 @@ def capitulo_1():
                 x0 = float(request.form.get('x0'))
                 x1 = float(request.form.get('x1'))
                 tol = float(request.form.get('tol', 0.001))
-                resultado = secante(fx, x0, x1, tol)
+                itera = int(request.form.get('iter', 100))
+                resultado = secante(fx, x0, x1, tol, itera)
                 resultado_secante = resultado if 'error' not in resultado else None
                 error_secante = resultado.get('error')
 
@@ -137,7 +142,8 @@ def capitulo_1():
                 ddfx = request.form.get('ddf_rm')
                 x0 = float(request.form.get('x0'))
                 tol = float(request.form.get('tol', 0.001))
-                resultado = raices_multiples(fx, dfx, ddfx, x0, tol)
+                itera = int(request.form.get('iter', 100))
+                resultado = raices_multiples(fx, dfx, ddfx, x0, tol, itera)
                 resultado_raicesmultiples = resultado if 'error' not in resultado else None
                 error_raicesmultiples = resultado.get('error')
 
