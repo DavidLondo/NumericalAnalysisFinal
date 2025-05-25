@@ -198,7 +198,6 @@ def capitulo_2():
             "Gauss-Seidel": gauss_seidel,
             "SOR": lambda A, b, x0, tol: sor(A, b, w, x0, tol)
         }
-
         for nombre, funcion in metodos.items():
             try:
                 resultado = funcion(A, b, x0, tol)
@@ -211,13 +210,11 @@ def capitulo_2():
                 }
             except Exception as e:
                 resultados[nombre] = {'error': str(e)}
-
         mejor = min(
             (m for m in resultados.items() if 'error' not in m[1]),
             key=lambda x: (x[1]['iteraciones'], x[1]['error_final']),
             default=None
         )
-        print("RESULTAOS:", resultados)
         return resultados, mejor[0] if mejor else "Ninguno"
     
     resultado_jacobi = resultado_gauss = resultado_sor = None
@@ -241,18 +238,12 @@ def capitulo_2():
                     radio_espectral, puede_converger = analizar_convergencia(A, metodo)
                 if request.form.get("generar_informe"):
                     informe, mejor_metodo = generar_informe_comparativo(A, b, x0, tol)
-                    print("informe:", informe)
-                    print("mejor_metodo:", mejor_metodo)
-                print("resultado_jacobi:", resultado_jacobi)
             elif metodo == "gaussseidel":
                 resultado_gauss = gauss_seidel(A, b, x0, tol)
                 if A:
                     radio_espectral, puede_converger = analizar_convergencia(A, metodo)
                 if request.form.get("generar_informe"):
                     informe, mejor_metodo = generar_informe_comparativo(A, b, x0, tol)
-                    print("informe:", informe)
-                    print("mejor_metodo:", mejor_metodo)
-                print("resultado_gauss:", resultado_gauss)
             elif metodo == "sor":
                 w = float(request.form.get("w", 1.1))
                 resultado_sor = sor(A, b, w, x0, tol)
@@ -260,9 +251,6 @@ def capitulo_2():
                     radio_espectral, puede_converger = analizar_convergencia(A, metodo, w)
                 if request.form.get("generar_informe"):
                     informe, mejor_metodo = generar_informe_comparativo(A, b, x0, tol, w)
-                    print("informe:", informe)
-                    print("mejor_metodo:", mejor_metodo)
-                print("resultado_sor:", resultado_sor)
 
         except Exception as e:
             if metodo == "jacobi":
@@ -271,8 +259,6 @@ def capitulo_2():
                 error_gauss = str(e)
             elif metodo == "sor":
                 error_sor = str(e)
-    
-    print("metodo_actual:"+ metodo_actual+"|")
 
     return render_template("chapter2.html",
                             resultado_jacobi=resultado_jacobi,
@@ -287,9 +273,36 @@ def capitulo_2():
                             informe=informe,
                             mejor_metodo=mejor_metodo)
 
-@app.route("/capitulo-3")
+@app.route("/capitulo-3", methods=["GET", "POST"])
 def capitulo_3():
-    return render_template("chapter3.html")
+    resultado_vandermonde = None
+    error_vandermonde = None
+    informe = mejor_metodo = None
+    metodo_actual = "vandermonde"
+
+    if request.method == "POST":
+        metodo = request.form.get("metodo")
+        metodo_actual = metodo
+        try:
+            vector_x = eval(request.form.get("vector_x"))
+            vector_y = eval(request.form.get("vector_y"))
+
+            if metodo == "vandermonde":
+                resultado_vandermonde = vandermonde(vector_x, vector_y)
+                if request.form.get("generar_informe"):
+                    # informe, mejor_metodo = generar_informe_comparativo(A, b, x0, tol)
+                    # print("informe:", informe)
+                    # print("mejor_metodo:", mejor_metodo)
+                    print("informe:")
+
+        except Exception as e:
+            if metodo == "vandermonde":
+                error_vandermonde = str(e)
+
+    return render_template("chapter3.html",
+                            metodo_actual=metodo_actual,
+                            resultado_vandermonde=resultado_vandermonde,
+                            error_vandermonde=error_vandermonde)
 
 if __name__ == "__main__":
     app.run(debug=True)

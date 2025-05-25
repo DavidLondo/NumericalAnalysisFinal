@@ -53,7 +53,24 @@
   </div>
 
   <div class="area-metodo">
-    
+    <!-- VANDERMONDE -->
+    <div id="vandermonde" class="metodo-formulario {% if metodo_actual == 'vandermonde' %}activo{% endif %}">
+      <h3>Vandermonde</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="vandermonde" />
+        <textarea name="vector_x" placeholder="Vector x (ej: [3, 3.7, 4.4])" required rows="3" style="width:100%;"></textarea>
+        <textarea name="vector_y" placeholder="Vector y (ej: [6, 10, 15])" required rows="3" style="width:100%;"></textarea>
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe"> Generar informe comparativo
+      </form>
+
+      {% if resultado_vandermonde %}
+      <h4>Resultado: {{ resultado_vandermonde['solucion'] }}</h4>
+      <img src="data:image/png;base64,{{ resultado_vandermonde['grafica'] }}" alt="Gráfico del polinomio">
+      {% elif error_vandermonde %}
+      <p style="color: red">{{ error_vandermonde }}</p>
+      {% endif %}
+    </div>
   </div>
 </div>
 
