@@ -6,3 +6,4 @@ from .newton import newton_raphson
 from .puntofijo import punto_fijo
 from .reglafalsa import regla_falsa
 from .secante import secante
+from .raicesmultiples import raices_multiples

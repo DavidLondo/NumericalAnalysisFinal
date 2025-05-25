@@ -1,9 +1,67 @@
-<!-- templates/home.html -->
 {% extends 'base.html' %}
 
-{% block title %}Capítulo 3{% endblock %}
+{% block title %}Capítulo 3 – Interpolación{% endblock %}
 
 {% block content %}
-    <h2>Capítulo 3</h2>
+<style>
+  .contenedor {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
 
+  .botones {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .botones button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: 1px solid #888;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  .area-metodo {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 6px;
+    min-width: 300px;
+  }
+
+  .metodo-formulario {
+    display: none;
+  }
+
+  .metodo-formulario.activo {
+    display: block;
+  }
+</style>
+
+<h2>Capítulo 3 – Selecciona un método</h2>
+
+<div class="contenedor">
+  <div class="botones">
+    <button onclick="mostrarFormulario('vandermonde')">Vandermonde</button>
+    <button onclick="mostrarFormulario('newtonint')">Newton Interpolante</button>
+    <button onclick="mostrarFormulario('lagrange')">Lagrange</button>
+    <button onclick="mostrarFormulario('splinel')">Spline Lineal</button>
+    <button onclick="mostrarFormulario('splinec')">Spline Cúbico</button>
+  </div>
+
+  <div class="area-metodo">
+    
+  </div>
+</div>
+
+<script>
+  function mostrarFormulario(id) {
+    const formularios = document.querySelectorAll(".metodo-formulario");
+    formularios.forEach(f => f.classList.remove("activo"));
+    document.getElementById(id).classList.add("activo");
+  }
+</script>
 {% endblock %}
