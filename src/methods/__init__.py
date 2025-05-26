@@ -6,3 +6,9 @@ from .newton import newton_raphson
 from .puntofijo import punto_fijo
 from .reglafalsa import regla_falsa
 from .secante import secante
+from .raicesmultiples import raices_multiples
+from .grafica_base_64 import generar_grafica_base64
+from .vandermonde import vandermonde
+from .newton_inter import newtoninter
+from .lagrange import lagrange
+from .spline import spline_interpolation

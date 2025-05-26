@@ -1,9 +1,337 @@
-<!-- templates/home.html -->
 {% extends 'base.html' %}
 
-{% block title %}Capítulo 3{% endblock %}
+{% block title %}Capítulo 3 – Interpolación{% endblock %}
 
 {% block content %}
-    <h2>Capítulo 3</h2>
 
+<h2>Capítulo 3 – Selecciona un método</h2>
+
+<div class="contenedor">
+  <div class="botones">
+    <button onclick="mostrarFormulario('vandermonde')">Vandermonde</button>
+    <button onclick="mostrarFormulario('newtoninter')">Newton Interpolante</button>
+    <button onclick="mostrarFormulario('lagrange')">Lagrange</button>
+    <button onclick="mostrarFormulario('splinel')">Spline Lineal</button>
+    <button onclick="mostrarFormulario('splinec')">Spline Cúbico</button>
+  </div>
+
+  <div class="area-metodo">
+    <!-- Explicación para todos los métodos de interpolación (Vandermonde, Newton, Lagrange, Spline lineal y cúbico) -->
+    <div style="border:1px solid #ccc; padding:1rem; background:#f9f9f9; margin-bottom:1rem;">
+      <h4>¿Cómo ingresar los datos?</h4>
+      <ul>
+        <li>
+          <strong>Vector&nbsp;x:</strong> Lista (o arreglo) con las abscisas de los puntos conocidos.<br>
+          <em>Ejemplo:</em> <code>[0, 1.5, 3.2, 5]</code>
+        </li>
+        <li>
+          <strong>Vector&nbsp;y:</strong> Lista con las ordenadas correspondientes a cada&nbsp;x.<br>
+          <em>Ejemplo:</em> <code>[2.0, 3.7, 1.5, 2.8]</code>
+        </li>
+        <li>
+          <strong>Informe comparativo:</strong> Para generar el informe debe marcar la casilla que lo indica e ingresar unos puntos extra.<br>
+        </li>
+      </ul>
+
+      <h5>Reglas básicas</h5>
+      <ul>
+        <li>Los vectores <code>x</code> e <code>y</code> deben tener la <strong>misma longitud</strong>.</li>
+        <li>Se necesitan al menos <strong>dos puntos</strong> para que el método funcione.</li>
+        <li>Los valores de <code>x</code> deben estar <strong>ordenados</strong> y no repetirse.</li>
+        <li>Para spline cúbico se aplica la condición de derivadas nulas en los extremos (spline natural).</li>
+      </ul>
+    </div>
+
+    {% if informe %}
+    <h3>Informe Comparativo</h3>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Método</th>
+          <th>Polinomio / Tramos</th>
+          <th>y estimado (x_real)</th>
+          <th>Error absoluto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for metodo, datos in informe.items() %}
+        <tr>
+          <td>{{ metodo }}</td>
+          <td>
+            {% if 'solucion' in datos %}
+              {{ datos['solucion'] }}
+            {% elif 'coeficientes_tramos' in datos %}
+              <ul>
+                {% for tramo in datos['coeficientes_tramos'] %}
+                  <li>{{ tramo }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              {{ datos['error'] }}
+            {% endif %}
+          </td>
+          <td>
+            {% if 'y_estimado' in datos %}
+              {{ "%.6f"|format(datos['y_estimado']) }}
+            {% else %}
+              N/A
+            {% endif %}
+          </td>
+          <td>
+            {% if 'error_validacion' in datos %}
+              {{ "%.6f"|format(datos['error_validacion']) }}
+            {% else %}
+              N/A
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p><strong>Mejor método:</strong> {{ mejor_metodo }}</p>
+  {% endif %}
+
+
+    <!-- VANDERMONDE -->
+    <div id="vandermonde" class="metodo-formulario {% if metodo_actual == 'vandermonde' %}activo{% endif %}">
+      <h3>Vandermonde</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="vandermonde" />
+        <textarea name="vector_x" placeholder="Vector x (ej: [3, 3.7, 4.4])" required rows="3" style="width:100%;"></textarea>
+        <textarea name="vector_y" placeholder="Vector y (ej: [6, 10, 15])" required rows="3" style="width:100%;"></textarea>
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe" class="check-informe"> Generar informe comparativo
+        <div class="campos-informe" style="display: none; margin-top: 1rem;">
+          <label for="x_real">x de validación:</label>
+          <input type="text" name="x_real" class="input-x" placeholder="Ej: 4" required>
+
+          <label for="y_real">y real (esperado):</label>
+          <input type="text" name="y_real" class="input-y" placeholder="Ej: 12.0952" required>
+        </div>
+      </form>
+
+      {% if resultado_vandermonde %}
+      <h4>Resultado: {{ resultado_vandermonde['solucion'] }}</h4>
+      <img src="data:image/png;base64,{{ resultado_vandermonde['grafica'] }}" alt="Gráfico del polinomio">
+      {% elif error_vandermonde %}
+      <p style="color: red">{{ error_vandermonde }}</p>
+      {% endif %}
+    </div>
+
+    <!-- NEWTON INTERPOLANTE -->
+    <div id="newtoninter" class="metodo-formulario {% if metodo_actual == 'newtoninter' %}activo{% endif %}">
+      <h3>Newton Interpolante</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="newtoninter" />
+        <textarea name="vector_x" placeholder="Vector x (ej: [3, 3.7, 4.4])" required rows="3" style="width:100%;"></textarea>
+        <textarea name="vector_y" placeholder="Vector y (ej: [6, 10, 15])" required rows="3" style="width:100%;"></textarea>
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe" class="check-informe"> Generar informe comparativo
+        <div class="campos-informe" style="display: none; margin-top: 1rem;">
+          <label for="x_real">x de validación:</label>
+          <input type="text" name="x_real" class="input-x" placeholder="Ej: 4" required>
+
+          <label for="y_real">y real (esperado):</label>
+          <input type="text" name="y_real" class="input-y" placeholder="Ej: 12.0952" required>
+        </div>
+      </form>
+
+      {% if resultado_newton %}
+      <h4>Resultado: {{ resultado_newton['solucion'] }}</h4>
+      <h4>Tabla de diferencias divididas</h4>
+      <table border="1">
+        <tr>
+          <th>i</th>
+          <th>x_i</th>
+          <th>f[x_i]</th>
+          <th>Diferencias Divididas</th>
+        </tr>
+        {% for fila in resultado_newton['tabla'] %}
+        <tr>
+          <td>{{ fila[0] }}</td>
+          <td>{{ fila[1] }}</td>
+          <td>{{ fila[2] }}</td>
+          <td>{{ fila[3] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <img src="data:image/png;base64,{{ resultado_newton['grafica'] }}" alt="Gráfico del polinomio">
+      {% elif error_newton %}
+      <p style="color: red">{{ error_newton }}</p>
+      {% endif %}
+    </div>
+
+    <!-- LAGRANGE -->
+    <div id="lagrange" class="metodo-formulario {% if metodo_actual == 'lagrange' %}activo{% endif %}">
+      <h3>Lagrange</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="lagrange" />
+        <textarea name="vector_x" placeholder="Vector x (ej: [3, 3.7, 4.4])" required rows="3" style="width:100%;"></textarea>
+        <textarea name="vector_y" placeholder="Vector y (ej: [6, 10, 15])" required rows="3" style="width:100%;"></textarea>
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe" class="check-informe"> Generar informe comparativo
+        <div class="campos-informe" style="display: none; margin-top: 1rem;">
+          <label for="x_real">x de validación:</label>
+          <input type="text" name="x_real" class="input-x" placeholder="Ej: 4" required>
+
+          <label for="y_real">y real (esperado):</label>
+          <input type="text" name="y_real" class="input-y" placeholder="Ej: 12.0952" required>
+        </div>
+      </form>
+
+      {% if resultado_lagrange %}
+      <h4>Resultado: {{ resultado_lagrange['solucion'] }}</h4>
+      <img src="data:image/png;base64,{{ resultado_lagrange['grafica'] }}" alt="Gráfico del polinomio">
+      {% elif error_lagrange %}
+      <p style="color: red">{{ error_lagrange }}</p>
+      {% endif %}
+  </div>
+
+       <!-- SPLINE -->
+    <div
+      id="splinel"
+      class="metodo-formulario {% if metodo_actual == 'splinel' %}activo{% endif %}"
+    >
+      <h3>Spline Lineal</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="splinel" />
+        <input
+          type="text"
+          name="vector_x"
+          placeholder="Vector x (ej: [1, 2, 3, 4])"
+          required
+        />
+        <input
+          type="text"
+          name="vector_y"
+          placeholder="Vector y (ej: [2.5, 3.6, 1.8, 4.2])"
+          required
+        />
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe" class="check-informe"> Generar informe comparativo
+        <div class="campos-informe" style="display: none; margin-top: 1rem;">
+          <label for="x_real">x de validación:</label>
+          <input type="text" name="x_real" class="input-x" placeholder="Ej: 4" required>
+
+          <label for="y_real">y real (esperado):</label>
+          <input type="text" name="y_real" class="input-y" placeholder="Ej: 12.0952" required>
+        </div>
+      </form>
+
+      {% if resultado_spline %}
+      <h4>Polinomios por tramo:</h4>
+      <ul>
+        {% for i in range(resultado_spline.solucion|length) %} {% set coef =
+        resultado_spline.solucion[i] %}
+        <li>
+          Tramo {{ i + 1 }}: {% if coef|length == 2 %} {{ "%.3f"|format(coef[0])
+          }}x + {{ "%.3f"|format(coef[1]) }} {% elif coef|length == 3 %} {{
+          "%.3f"|format(coef[0]) }}x² + {{ "%.3f"|format(coef[1]) }}x + {{
+          "%.3f"|format(coef[2]) }} {% elif coef|length == 4 %} {{
+          "%.3f"|format(coef[0]) }}x³ + {{ "%.3f"|format(coef[1]) }}x² + {{
+          "%.3f"|format(coef[2]) }}x + {{ "%.3f"|format(coef[3]) }} {% else %}
+          Polinomio no soportado {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+
+      <h4>Gráfica de la interpolación:</h4>
+      <img
+        src="data:image/png;base64,{{ resultado_spline.grafica_base64 }}"
+        alt="Gráfica de interpolación spline"
+        style="max-width: 100%; height: auto"
+      />
+      {% endif %} {% if error_spline %}
+      <p style="color: red">{{ error_spline }}</p>
+      {% endif %}
+    </div>
+
+    <div
+      id="splinec"
+      class="metodo-formulario {% if metodo_actual == 'splinec' %}activo{% endif %}"
+    >
+      <h3>Spline Cúbico</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="splinec" />
+        <input
+          type="text"
+          name="vector_x"
+          placeholder="Vector x (ej: [1, 2, 3, 4])"
+          required
+        />
+        <input
+          type="text"
+          name="vector_y"
+          placeholder="Vector y (ej: [2.5, 3.6, 1.8, 4.2])"
+          required
+        />
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe" class="check-informe"> Generar informe comparativo
+        <div class="campos-informe" style="display: none; margin-top: 1rem;">
+          <label for="x_real">x de validación:</label>
+          <input type="text" name="x_real" class="input-x" placeholder="Ej: 4" required>
+
+          <label for="y_real">y real (esperado):</label>
+          <input type="text" name="y_real" class="input-y" placeholder="Ej: 12.0952" required>
+        </div>
+      </form>
+
+      {% if resultado_spline %}
+      <h4>Polinomios por tramo:</h4>
+      <ul>
+        {% for i in range(resultado_spline.solucion|length) %} {% set coef =
+        resultado_spline.solucion[i] %}
+        <li>
+          S<sub>{{ i + 1 }}</sub>(x) = {% if coef|length == 4 %} {{
+          "%.3f"|format(coef[0]) }}x³ {% if coef[1] >= 0 %}+{% endif %} {{
+          "%.3f"|format(coef[1]) }}x² {% if coef[2] >= 0 %}+{% endif %} {{
+          "%.3f"|format(coef[2]) }}x {% if coef[3] >= 0 %}+{% endif %} {{
+          "%.3f"|format(coef[3]) }} {% else %} Polinomio no soportado {% endif
+          %}
+        </li>
+        {% endfor %}
+      </ul>
+
+      <h4>Gráfica de la interpolación:</h4>
+      <img
+        src="data:image/png;base64,{{ resultado_spline.grafica_base64 }}"
+        alt="Gráfica de interpolación spline"
+        style="max-width: 100%; height: auto"
+      />
+      {% endif %} {% if error_spline %}
+      <p style="color: red">{{ error_spline }}</p>
+      {% endif %}
+    </div>
+</div>
+
+<script>
+  function mostrarFormulario(id) {
+    const formularios = document.querySelectorAll(".metodo-formulario");
+    formularios.forEach(f => f.classList.remove("activo"));
+    document.getElementById(id).classList.add("activo");
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll(".check-informe");
+
+    checkboxes.forEach(function (checkbox) {
+      checkbox.addEventListener("change", function () {
+        const container = this.closest("form");
+        const camposInforme = container.querySelector(".campos-informe");
+        const inputs = camposInforme.querySelectorAll("input");
+
+        if (this.checked) {
+          camposInforme.style.display = "block";
+          inputs.forEach(input => input.disabled = false);
+        } else {
+          camposInforme.style.display = "none";
+          inputs.forEach(input => input.disabled = true);
+        }
+      });
+
+      // Inicializa el estado al cargar
+      checkbox.dispatchEvent(new Event('change'));
+    });
+  });
+</script>
 {% endblock %}
