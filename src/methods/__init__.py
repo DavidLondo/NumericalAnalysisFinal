@@ -9,3 +9,4 @@ from .secante import secante
 from .raicesmultiples import raices_multiples
 from .grafica_base_64 import generar_grafica_base64
 from .vandermonde import vandermonde
+from .newton_inter import newtoninter
