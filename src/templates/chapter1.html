@@ -1,42 +1,5 @@
 {% extends 'base.html' %} {% block title %}Métodos Iterativos{% endblock %} {%
 block content %}
-<style>
-  .contenedor {
-    display: flex;
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-
-  .botones {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .botones button {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    border: 1px solid #888;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-  }
-
-  .area-metodo {
-    flex-grow: 1;
-    border: 1px solid #ccc;
-    padding: 1rem;
-    border-radius: 6px;
-    min-width: 300px;
-  }
-
-  .metodo-formulario {
-    display: none;
-  }
-
-  .metodo-formulario.activo {
-    display: block;
-  }
-</style>
 
 <h2>Capítulo 1 – Selecciona un método iterativo</h2>
 
@@ -53,7 +16,14 @@ block content %}
   </div>
 
   <div class="area-metodo">
-    <section>
+    <div
+      style="
+        border: 1px solid #ccc;
+        padding: 1rem;
+        background: #f9f9f9;
+        margin-bottom: 1rem;
+      "
+    >
       <h2>Guía para usar los métodos numéricos</h2>
       <h3>1. Cómo ingresar funciones matemáticas</h3>
       <p>
@@ -106,7 +76,7 @@ block content %}
           las funciones soportadas.
         </li>
       </ul>
-    </section>
+    </div>
 
     <div
       id="biseccion"
@@ -130,22 +100,18 @@ block content %}
           placeholder="Máximo de iteraciónes"
           required
         />
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="informe_comparativo"
-              {%
-              if
-              informe_comparativo
-              %}checked{%
-              endif
-              %}
-            />
-            Mostrar informe comparativo
-          </label>
-        </div>
         <button type="submit">Calcular</button>
+        <input
+          type="checkbox"
+          name="informe_comparativo"
+          {%
+          if
+          informe_comparativo
+          %}checked{%
+          endif
+          %}
+        />
+        Generar informe comparativo
       </form>
 
       {% if resultado_biseccion %}
@@ -170,10 +136,12 @@ block content %}
       <p style="color: red">{{ error_biseccion }}</p>
       {% endif %} {% if resultado_biseccion.grafica_base64 %}
       <h3>Gráfica:</h3>
-      <img
-        src="data:image/png;base64,{{ resultado_biseccion.grafica_base64 }}"
-        alt="Gráfica de la función"
-      />
+      <div class="grafica-container">
+        <img
+          src="data:image/png;base64,{{ resultado_biseccion.grafica_base64 }}"
+          alt="Gráfica de la función"
+        />
+      </div>
       {% endif %}
     </div>
 
@@ -199,22 +167,18 @@ block content %}
           placeholder="Máximo de iteraciónes"
           required
         />
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="informe_comparativo"
-              {%
-              if
-              informe_comparativo
-              %}checked{%
-              endif
-              %}
-            />
-            Mostrar informe comparativo
-          </label>
-        </div>
         <button type="submit">Calcular</button>
+        <input
+          type="checkbox"
+          name="informe_comparativo"
+          {%
+          if
+          informe_comparativo
+          %}checked{%
+          endif
+          %}
+        />
+        Generar informe comparativo
       </form>
 
       {% if resultado_reglafalsa %}
@@ -251,10 +215,12 @@ block content %}
       <p style="color: red">{{ error_reglafalsa }}</p>
       {% endif %} {% if resultado_reglafalsa.grafica_base64 %}
       <h3>Gráfica de f(c):</h3>
-      <img
-        src="data:image/png;base64,{{ resultado_reglafalsa.grafica_base64 }}"
-        alt="Gráfica Regla Falsa"
-      />
+      <div class="grafica-container">
+        <img
+          src="data:image/png;base64,{{ resultado_reglafalsa.grafica_base64 }}"
+          alt="Gráfica de la función"
+        />
+      </div>
       {% endif %}
     </div>
 
@@ -279,22 +245,18 @@ block content %}
           placeholder="Máximo de iteraciónes"
           required
         />
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="informe_comparativo"
-              {%
-              if
-              informe_comparativo
-              %}checked{%
-              endif
-              %}
-            />
-            Mostrar informe comparativo
-          </label>
-        </div>
         <button type="submit">Calcular</button>
+        <input
+          type="checkbox"
+          name="informe_comparativo"
+          {%
+          if
+          informe_comparativo
+          %}checked{%
+          endif
+          %}
+        />
+        Generar informe comparativo
       </form>
 
       {% if resultado_puntofijo %}
@@ -323,10 +285,12 @@ block content %}
       <p style="color: red">{{ error_puntofijo }}</p>
       {% endif %} {% if resultado_puntofijo.grafica_base64 %}
       <h3>Gráfica:</h3>
-      <img
-        src="data:image/png;base64,{{ resultado_puntofijo.grafica_base64 }}"
-        alt="Gráfica Punto Fijo"
-      />
+      <div class="grafica-container">
+        <img
+          src="data:image/png;base64,{{ resultado_puntofijo.grafica_base64 }}"
+          alt="Gráfica de la función"
+        />
+      </div>
       {% endif %}
     </div>
 
@@ -351,22 +315,18 @@ block content %}
           placeholder="Máximo de iteraciónes"
           required
         />
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="informe_comparativo"
-              {%
-              if
-              informe_comparativo
-              %}checked{%
-              endif
-              %}
-            />
-            Mostrar informe comparativo
-          </label>
-        </div>
         <button type="submit">Calcular</button>
+        <input
+          type="checkbox"
+          name="informe_comparativo"
+          {%
+          if
+          informe_comparativo
+          %}checked{%
+          endif
+          %}
+        />
+        Generar informe comparativo
       </form>
 
       {% if resultado_newton %}
@@ -395,10 +355,12 @@ block content %}
       <p style="color: red">{{ error_newton }}</p>
       {% endif %} {% if resultado_newton.grafica_base64 %}
       <h3>Gráfica:</h3>
-      <img
-        src="data:image/png;base64,{{ resultado_newton.grafica_base64 }}"
-        alt="Gráfica Newton-Raphson"
-      />
+      <div class="grafica-container">
+        <img
+          src="data:image/png;base64,{{ resultado_newton.grafica_base64 }}"
+          alt="Gráfica de la función"
+        />
+      </div>
       {% endif %}
     </div>
 
@@ -424,22 +386,18 @@ block content %}
           placeholder="Máximo de iteraciónes"
           required
         />
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="informe_comparativo"
-              {%
-              if
-              informe_comparativo
-              %}checked{%
-              endif
-              %}
-            />
-            Mostrar informe comparativo
-          </label>
-        </div>
         <button type="submit">Calcular</button>
+        <input
+          type="checkbox"
+          name="informe_comparativo"
+          {%
+          if
+          informe_comparativo
+          %}checked{%
+          endif
+          %}
+        />
+        Generar informe comparativo
       </form>
 
       {% if resultado_secante %}
@@ -468,10 +426,12 @@ block content %}
       <p style="color: red">{{ error_secante }}</p>
       {% endif %} {% if resultado_secante.grafica_base64 %}
       <h3>Gráfica de f(c):</h3>
-      <img
-        src="data:image/png;base64,{{ resultado_secante.grafica_base64 }}"
-        alt="Gráfica Regla Falsa"
-      />
+      <div class="grafica-container">
+        <img
+          src="data:image/png;base64,{{ resultado_secante.grafica_base64 }}"
+          alt="Gráfica de la función"
+        />
+      </div>
       {% endif %}
     </div>
 
@@ -498,22 +458,18 @@ block content %}
           placeholder="Máximo de iteraciónes"
           required
         />
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="informe_comparativo"
-              {%
-              if
-              informe_comparativo
-              %}checked{%
-              endif
-              %}
-            />
-            Mostrar informe comparativo
-          </label>
-        </div>
         <button type="submit">Calcular</button>
+        <input
+          type="checkbox"
+          name="informe_comparativo"
+          {%
+          if
+          informe_comparativo
+          %}checked{%
+          endif
+          %}
+        />
+        Generar informe comparativo
       </form>
 
       {% if resultado_raicesmultiples %}
@@ -542,10 +498,12 @@ block content %}
       <p style="color: red">{{ error_raicesmultiples }}</p>
       {% endif %} {% if resultado_raicesmultiples.grafica_base64 %}
       <h3>Gráfica:</h3>
-      <img
-        src="data:image/png;base64,{{ resultado_raicesmultiples.grafica_base64 }}"
-        alt="Gráfica Raíces Múltiples"
-      />
+      <div class="grafica-container">
+        <img
+          src="data:image/png;base64,{{ resultado_raicesmultiples.grafica_base64 }}"
+          alt="Gráfica de la función"
+        />
+      </div>
       {% endif %}
     </div>
     {% if resultados_comparativos %}
