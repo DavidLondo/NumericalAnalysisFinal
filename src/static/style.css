@@ -1,0 +1,339 @@
+:root {
+    --jet: #353535ff;
+    --caribbean-current: #3c6e71ff;
+    --white: #ffffffff;
+    --platinum: #d9d9d9ff;
+    --indigo-dye: #284b63ff;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--platinum);
+    color: var(--jet);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--indigo-dye);
+    padding: 1rem 2rem;
+    color: var(--white);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--white);
+}
+
+.navbar-menu {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-menu li a {
+    color: var(--platinum);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-menu li a:hover {
+    color: var(--caribbean-current);
+}
+
+.cards-container {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 2rem 1rem;
+    align-items: stretch; /* Asegura que todas las cards tengan la misma altura */
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex; /* Cambiado a flex para mejor control */
+    flex: 0 0 320px; /* Cambiado a flex-grow 0 para tamaño fijo */
+    max-width: 320px;
+    min-height: 400px; /* Altura mínima fija para todas */
+}
+
+.card {
+    background-color: var(--white);
+    border-radius: 14px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    width: 100%; /* Ocupa todo el ancho del card-link */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Contenido pegado arriba */
+    align-items: center; /* Centrado horizontal */
+    text-align: center;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    border: 2px solid transparent;
+}
+
+.card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+    border-color: var(--caribbean-current);
+}
+
+.card h3 {
+    margin-top: 0.6rem;
+    font-size: 1.75rem;
+    color: var(--caribbean-current);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    width: 100%;
+}
+
+.subtitle {
+    font-weight: 600;
+    color: var(--indigo-dye);
+    margin-top: 0.3rem;
+    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+    width: 100%;
+}
+
+.card ul {
+    list-style-position: inside; /* Puntos dentro del flujo */
+    padding-left: 0;
+    color: var(--jet);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: auto; /* Empuja todo hacia arriba */
+    width: 100%;
+    text-align: center;
+}
+
+.card ul li {
+    margin-bottom: 0.5rem;
+    text-align: center;
+    list-style-type: none; /* Opcional: quita los puntos si prefieres */
+    position: relative;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+/* Opcional: h2 centrado y elegante */
+h2 {
+    font-weight: 700;
+    color: var(--caribbean-current);
+    font-size: 2.6rem;
+    text-align: center;
+    margin: 2rem 0 1.5rem;
+}
+
+/* Media queries para mejor responsividad */
+@media (max-width: 1024px) {
+    .cards-container {
+        gap: 1.5rem;
+    }
+    .card-link {
+        flex: 1 1 45%;
+        max-width: 45%;
+    }
+}
+
+@media (max-width: 640px) {
+    .cards-container {
+        gap: 1rem;
+        padding: 1rem;
+    }
+    .card-link {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}
+
+.contenedor {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.botones {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 130px;
+}
+
+.botones button {
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  border: 2px solid var(--caribbean-current);
+  background-color: var(--white);
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--caribbean-current);
+  transition: all 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+  box-shadow: 0 3px 7px rgb(60 110 113 / 0.15);
+}
+
+.botones button:hover,
+.botones button:focus {
+  background-color: var(--caribbean-current);
+  color: var(--white);
+  border-color: var(--caribbean-current);
+  box-shadow: 0 8px 15px rgb(60 110 113 / 0.4);
+  outline: none;
+}
+
+.area-metodo {
+  flex-grow: 1;
+  border: 2px solid var(--caribbean-current);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  min-width: 320px;
+  background-color: #fefefe;
+  box-shadow: 0 4px 15px rgb(60 110 113 / 0.1);
+}
+
+.metodo-formulario {
+  display: none;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.metodo-formulario.activo {
+  display: block;
+}
+
+/* Inputs y textarea */
+.metodo-formulario textarea,
+.metodo-formulario input[type="text"] {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  margin: 0.6rem 0 1rem 0;
+  border: 1.8px solid var(--platinum);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: 'Roboto', sans-serif;
+  transition: border-color 0.3s ease;
+}
+
+.metodo-formulario textarea:focus,
+.metodo-formulario input[type="text"]:focus {
+  border-color: var(--caribbean-current);
+  outline: none;
+  box-shadow: 0 0 6px var(--caribbean-current);
+}
+
+.metodo-formulario button[type="submit"] {
+  background-color: var(--caribbean-current);
+  color: var(--white);
+  border: none;
+  padding: 0.6rem 1.3rem;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 5px 12px rgb(60 110 113 / 0.4);
+}
+
+.metodo-formulario button[type="submit"]:hover,
+.metodo-formulario button[type="submit"]:focus {
+  background-color: var(--indigo-dye);
+  outline: none;
+  box-shadow: 0 8px 18px rgb(40 75 99 / 0.6);
+}
+
+/* Tabla */
+.area-metodo table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-family: 'Roboto', sans-serif;
+}
+
+.area-metodo table th,
+.area-metodo table td {
+  border: 1px solid var(--platinum);
+  padding: 0.5rem 0.8rem;
+  text-align: center;
+}
+
+.area-metodo table th {
+  background-color: var(--caribbean-current);
+  color: var(--white);
+  font-weight: 600;
+  user-select: none;
+}
+
+.area-metodo table tr:nth-child(even) {
+  background-color: #f4f7f9;
+}
+
+/* Informe comparativo */
+.area-metodo > h3 {
+  color: var(--caribbean-current);
+  margin-bottom: 0.8rem;
+}
+
+.area-metodo p strong {
+  color: var(--caribbean-current);
+}
+
+/* Lista de explicación */
+.area-metodo ul {
+  padding-left: 1.2rem;
+  color: var(--jet);
+  font-size: 0.95rem;
+}
+
+.area-metodo ul li {
+  margin-bottom: 0.45rem;
+}
+
+/* Checkbox */
+.metodo-formulario input[type="checkbox"] {
+  margin-left: 0.6rem;
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+/* Animación fadeIn */
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+/* Contenedor para la gráfica con scroll horizontal */
+.grafica-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 1rem 0;
+    border: 1px solid var(--platinum);
+    border-radius: 8px;
+    background-color: var(--white);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.grafica-container img {
+    display: block; /* Elimina espacio extra debajo de la imagen */
+    max-width: none; /* Permite que la imagen mantenga su tamaño original */
+    height: auto;
+    padding: 1rem;
+    background-color: var(--white);
+}
+
