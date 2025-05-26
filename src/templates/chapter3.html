@@ -53,8 +53,32 @@
   </div>
 
   <div class="area-metodo">
-    <p>[3, 3.7, 4.4] - [6, 10, 15]</p>
-    <p>4 - 12.0952</p>
+    <!-- Explicación para todos los métodos de interpolación (Vandermonde, Newton, Lagrange, Spline lineal y cúbico) -->
+    <div style="border:1px solid #ccc; padding:1rem; background:#f9f9f9; margin-bottom:1rem;">
+      <h4>¿Cómo ingresar los datos?</h4>
+      <ul>
+        <li>
+          <strong>Vector&nbsp;x:</strong> Lista (o arreglo) con las abscisas de los puntos conocidos.<br>
+          <em>Ejemplo:</em> <code>[0, 1.5, 3.2, 5]</code>
+        </li>
+        <li>
+          <strong>Vector&nbsp;y:</strong> Lista con las ordenadas correspondientes a cada&nbsp;x.<br>
+          <em>Ejemplo:</em> <code>[2.0, 3.7, 1.5, 2.8]</code>
+        </li>
+        <li>
+          <strong>Informe comparativo:</strong> Para generar el informe debe marcar la casilla que lo indica e ingresar unos puntos extra.<br>
+        </li>
+      </ul>
+
+      <h5>Reglas básicas</h5>
+      <ul>
+        <li>Los vectores <code>x</code> e <code>y</code> deben tener la <strong>misma longitud</strong>.</li>
+        <li>Se necesitan al menos <strong>dos puntos</strong> para que el método funcione.</li>
+        <li>Los valores de <code>x</code> deben estar <strong>ordenados</strong> y no repetirse.</li>
+        <li>Para spline cúbico se aplica la condición de derivadas nulas en los extremos (spline natural).</li>
+      </ul>
+    </div>
+
     {% if informe %}
     <h3>Informe Comparativo</h3>
     <table border="1">
