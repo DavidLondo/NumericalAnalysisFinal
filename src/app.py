@@ -275,8 +275,8 @@ def capitulo_2():
 
 @app.route("/capitulo-3", methods=["GET", "POST"])
 def capitulo_3():
-    resultado_vandermonde = None
-    error_vandermonde = None
+    resultado_vandermonde = resultado_newton = None
+    error_vandermonde = error_newton = None
     informe = mejor_metodo = None
     metodo_actual = "vandermonde"
 
@@ -294,15 +294,27 @@ def capitulo_3():
                     # print("informe:", informe)
                     # print("mejor_metodo:", mejor_metodo)
                     print("informe:")
+            
+            elif metodo == "newtoninter":
+                resultado_newton = newtoninter(vector_x, vector_y)
+                if request.form.get("generar_informe"):
+                    # informe, mejor_metodo = generar_informe_comparativo(A, b, x0, tol)
+                    # print("informe:", informe)
+                    # print("mejor_metodo:", mejor_metodo)
+                    print("informe:")
 
         except Exception as e:
             if metodo == "vandermonde":
                 error_vandermonde = str(e)
+            elif metodo == "newtoninter":
+                error_newton = str(e)
 
     return render_template("chapter3.html",
                             metodo_actual=metodo_actual,
                             resultado_vandermonde=resultado_vandermonde,
-                            error_vandermonde=error_vandermonde)
+                            error_vandermonde=error_vandermonde,
+                            resultado_newton=resultado_newton,
+                            error_newton=error_newton,)
 
 if __name__ == "__main__":
     app.run(debug=True)

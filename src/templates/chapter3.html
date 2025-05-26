@@ -46,13 +46,14 @@
 <div class="contenedor">
   <div class="botones">
     <button onclick="mostrarFormulario('vandermonde')">Vandermonde</button>
-    <button onclick="mostrarFormulario('newtonint')">Newton Interpolante</button>
+    <button onclick="mostrarFormulario('newtoninter')">Newton Interpolante</button>
     <button onclick="mostrarFormulario('lagrange')">Lagrange</button>
     <button onclick="mostrarFormulario('splinel')">Spline Lineal</button>
     <button onclick="mostrarFormulario('splinec')">Spline Cúbico</button>
   </div>
 
   <div class="area-metodo">
+    <p>[3, 3.7, 4.4] - [6, 10, 15]</p>
     <!-- VANDERMONDE -->
     <div id="vandermonde" class="metodo-formulario {% if metodo_actual == 'vandermonde' %}activo{% endif %}">
       <h3>Vandermonde</h3>
@@ -71,6 +72,41 @@
       <p style="color: red">{{ error_vandermonde }}</p>
       {% endif %}
     </div>
+
+    <!-- NEWTON INTERPOLANTE -->
+    <div id="newtoninter" class="metodo-formulario {% if metodo_actual == 'newtoninter' %}activo{% endif %}">
+      <h3>Newton Interpolante</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="newtoninter" />
+        <textarea name="vector_x" placeholder="Vector x (ej: [3, 3.7, 4.4])" required rows="3" style="width:100%;"></textarea>
+        <textarea name="vector_y" placeholder="Vector y (ej: [6, 10, 15])" required rows="3" style="width:100%;"></textarea>
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe"> Generar informe comparativo
+      </form>
+
+      {% if resultado_newton %}
+      <h4>Resultado: {{ resultado_newton['solucion'] }}</h4>
+      <h4>Tabla de diferencias divididas</h4>
+      <table border="1">
+        <tr>
+          <th>i</th>
+          <th>x_i</th>
+          <th>f[x_i]</th>
+          <th>Diferencias Divididas</th>
+        </tr>
+        {% for fila in resultado_newton['tabla'] %}
+        <tr>
+          <td>{{ fila[0] }}</td>
+          <td>{{ fila[1] }}</td>
+          <td>{{ fila[2] }}</td>
+          <td>{{ fila[3] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <img src="data:image/png;base64,{{ resultado_newton['grafica'] }}" alt="Gráfico del polinomio">
+      {% elif error_newton %}
+      <p style="color: red">{{ error_newton }}</p>
+      {% endif %}
   </div>
 </div>
 
