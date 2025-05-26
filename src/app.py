@@ -293,32 +293,95 @@ def capitulo_3():
             "Newton": newtoninter,
             "Lagrange": lagrange
         }
+
         informe = {}
         errores = {}
+
         for nombre, funcion in metodos.items():
             try:
                 resultado = funcion(x, y)
-                # Transformar polinomio a coeficientes para evaluar en x_real
                 coef = resultado['solucion']
-
                 y_estimado = np.polyval(coef, x_real)
                 error = abs(y_real - y_estimado)
                 informe[nombre] = {
-                    "solucion": resultado['solucion'],
+                    "solucion": coef,
                     "error_validacion": error,
                     "y_estimado": y_estimado
                 }
                 errores[nombre] = error
-
             except Exception as e:
                 informe[nombre] = {"error": str(e)}
                 errores[nombre] = float('inf')
 
+        # ----- Spline Lineal -----
+        try:
+            spline_lineal = spline_interpolation(x, y, grado=1)
+            if "error" in spline_lineal:
+                raise Exception(spline_lineal["error"])
+            
+            coef_splines = spline_lineal["solucion"]
+            y_val = None
+
+            for i in range(len(x) - 1):
+                if x[i] <= x_real <= x[i + 1]:
+                    coef = coef_splines[i]
+                    d = len(coef) - 1
+                    y_val = sum(coef[j] * x_real**(d - j) for j in range(d + 1))
+                    break
+            if y_val is None:
+                y_val = 0
+
+            error = abs(y_real - y_val)
+
+            informe["Spline Lineal"] = {
+                "coeficientes_tramos": coef_splines,
+                "error_validacion": error,
+                "y_estimado": y_val
+            }
+            errores["Spline Lineal"] = error
+
+        except Exception as e:
+            informe["Spline Lineal"] = {"error": str(e)}
+            errores["Spline Lineal"] = float('inf')
+
+        # ----- Spline Cúbico -----
+        try:
+            spline_cubico = spline_interpolation(x, y, grado=3)
+            if "error" in spline_cubico:
+                raise Exception(spline_cubico["error"])
+            
+            coef_splines = spline_cubico["solucion"]
+            y_val = None
+
+            for i in range(len(x) - 1):
+                if x[i] <= x_real <= x[i + 1]:
+                    coef = coef_splines[i]
+                    d = len(coef) - 1
+                    y_val = sum(coef[j] * x_real**(d - j) for j in range(d + 1))
+                    break
+            if y_val is None:
+                y_val = 0
+
+            error = abs(y_real - y_val)
+
+            informe["Spline Cúbico"] = {
+                "coeficientes_tramos": coef_splines,
+                "error_validacion": error,
+                "y_estimado": y_val
+            }
+            errores["Spline Cúbico"] = error
+
+        except Exception as e:
+            informe["Spline Cúbico"] = {"error": str(e)}
+            errores["Spline Cúbico"] = float('inf')
+
         mejor = min(errores.items(), key=lambda x: x[1], default=("Ninguno", None))[0]
         return informe, mejor
 
-    resultado_vandermonde = resultado_newton = resultado_lagrange = None
-    error_vandermonde = error_newton = error_lagrange = None
+
+
+    resultado_vandermonde = resultado_newton = resultado_lagrange = resultado_spline = None
+    error_vandermonde = error_newton = error_lagrange = error_spline = None
     informe = mejor_metodo = None
     metodo_actual = "vandermonde"
 
@@ -352,6 +415,20 @@ def capitulo_3():
                     x_real = float(request.form.get("x_real", 0))
                     y_real = float(request.form.get("y_real", 0))
                     informe, mejor_metodo = generar_informe_comparativo(vector_x, vector_y, x_real, y_real)
+            
+            elif metodo == "splinel":
+                resultado_spline = spline_interpolation(vector_x,vector_y,1)
+                if request.form.get("generar_informe"):
+                    x_real = float(request.form.get("x_real", 0))
+                    y_real = float(request.form.get("y_real", 0))
+                    informe, mejor_metodo = generar_informe_comparativo(vector_x, vector_y, x_real, y_real)
+
+            elif metodo == "splinec":
+                resultado_spline = spline_interpolation(vector_x,vector_y,3)
+                if request.form.get("generar_informe"):
+                    x_real = float(request.form.get("x_real", 0))
+                    y_real = float(request.form.get("y_real", 0))
+                    informe, mejor_metodo = generar_informe_comparativo(vector_x, vector_y, x_real, y_real)
 
         except Exception as e:
             if metodo == "vandermonde":
@@ -369,6 +446,8 @@ def capitulo_3():
                             error_newton=error_newton,
                             resultado_lagrange=resultado_lagrange,
                             error_lagrange=error_lagrange,
+                            resultado_spline=resultado_spline,
+                            error_spline=error_spline,
                             informe=informe,
                             mejor_metodo=mejor_metodo)
 
