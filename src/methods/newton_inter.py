@@ -14,8 +14,6 @@ def newtoninter(x, y):
             tabla[i, j] = (tabla[i, j-1] - tabla[i-1, j-1]) / (tabla[i, 0] - tabla[i-j+1, 0])
 
     coef = [tabla[i, i + 1] for i in range(n)]
-    print("Tabla de diferencias divididas:")
-    print(tabla)
 
     pol = np.array([0.0])
     acum = np.array([1.0])
