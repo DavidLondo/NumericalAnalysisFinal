@@ -54,6 +54,33 @@
 
   <div class="area-metodo">
     <p>[3, 3.7, 4.4] - [6, 10, 15]</p>
+    <p>4 - 12.0952</p>
+    <!-- Informe -->
+    {% if informe %}
+      <h3>Informe Comparativo</h3>
+      <table border="1">
+        <thead>
+            <tr>
+                <th>Método</th>
+                <th>Polinomio</th>
+                <th>y estimado (x_real)</th>
+                <th>Error absoluto</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for metodo, datos in informe.items() %}
+            <tr>
+                <td>{{ metodo }}</td>
+                <td>{{ datos['solucion'] if 'solucion' in datos else datos['error'] }}</td>
+                <td>{{ "%.6f"|format(datos['y_estimado']) if 'y_estimado' in datos else "N/A" }}</td>
+                <td>{{ "%.6f"|format(datos['error_validacion']) if 'error_validacion' in datos else "N/A" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+      <p><strong>Mejor método:</strong> {{ mejor_metodo }}</p>
+    {% endif %}
+
     <!-- VANDERMONDE -->
     <div id="vandermonde" class="metodo-formulario {% if metodo_actual == 'vandermonde' %}activo{% endif %}">
       <h3>Vandermonde</h3>
@@ -62,7 +89,14 @@
         <textarea name="vector_x" placeholder="Vector x (ej: [3, 3.7, 4.4])" required rows="3" style="width:100%;"></textarea>
         <textarea name="vector_y" placeholder="Vector y (ej: [6, 10, 15])" required rows="3" style="width:100%;"></textarea>
         <button type="submit">Calcular</button>
-        <input type="checkbox" name="generar_informe"> Generar informe comparativo
+        <input type="checkbox" name="generar_informe" class="check-informe"> Generar informe comparativo
+        <div class="campos-informe" style="display: none; margin-top: 1rem;">
+          <label for="x_real">x de validación:</label>
+          <input type="text" name="x_real" class="input-x" placeholder="Ej: 4" required>
+
+          <label for="y_real">y real (esperado):</label>
+          <input type="text" name="y_real" class="input-y" placeholder="Ej: 12.0952" required>
+        </div>
       </form>
 
       {% if resultado_vandermonde %}
@@ -81,7 +115,14 @@
         <textarea name="vector_x" placeholder="Vector x (ej: [3, 3.7, 4.4])" required rows="3" style="width:100%;"></textarea>
         <textarea name="vector_y" placeholder="Vector y (ej: [6, 10, 15])" required rows="3" style="width:100%;"></textarea>
         <button type="submit">Calcular</button>
-        <input type="checkbox" name="generar_informe"> Generar informe comparativo
+        <input type="checkbox" name="generar_informe" class="check-informe"> Generar informe comparativo
+        <div class="campos-informe" style="display: none; margin-top: 1rem;">
+          <label for="x_real">x de validación:</label>
+          <input type="text" name="x_real" class="input-x" placeholder="Ej: 4" required>
+
+          <label for="y_real">y real (esperado):</label>
+          <input type="text" name="y_real" class="input-y" placeholder="Ej: 12.0952" required>
+        </div>
       </form>
 
       {% if resultado_newton %}
@@ -107,6 +148,32 @@
       {% elif error_newton %}
       <p style="color: red">{{ error_newton }}</p>
       {% endif %}
+    </div>
+
+    <!-- LAGRANGE -->
+    <div id="lagrange" class="metodo-formulario {% if metodo_actual == 'lagrange' %}activo{% endif %}">
+      <h3>Lagrange</h3>
+      <form method="post">
+        <input type="hidden" name="metodo" value="lagrange" />
+        <textarea name="vector_x" placeholder="Vector x (ej: [3, 3.7, 4.4])" required rows="3" style="width:100%;"></textarea>
+        <textarea name="vector_y" placeholder="Vector y (ej: [6, 10, 15])" required rows="3" style="width:100%;"></textarea>
+        <button type="submit">Calcular</button>
+        <input type="checkbox" name="generar_informe" class="check-informe"> Generar informe comparativo
+        <div class="campos-informe" style="display: none; margin-top: 1rem;">
+          <label for="x_real">x de validación:</label>
+          <input type="text" name="x_real" class="input-x" placeholder="Ej: 4" required>
+
+          <label for="y_real">y real (esperado):</label>
+          <input type="text" name="y_real" class="input-y" placeholder="Ej: 12.0952" required>
+        </div>
+      </form>
+
+      {% if resultado_lagrange %}
+      <h4>Resultado: {{ resultado_lagrange['solucion'] }}</h4>
+      <img src="data:image/png;base64,{{ resultado_lagrange['grafica'] }}" alt="Gráfico del polinomio">
+      {% elif error_lagrange %}
+      <p style="color: red">{{ error_lagrange }}</p>
+      {% endif %}
   </div>
 </div>
 
@@ -116,5 +183,28 @@
     formularios.forEach(f => f.classList.remove("activo"));
     document.getElementById(id).classList.add("activo");
   }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll(".check-informe");
+
+    checkboxes.forEach(function (checkbox) {
+      checkbox.addEventListener("change", function () {
+        const container = this.closest("form");
+        const camposInforme = container.querySelector(".campos-informe");
+        const inputs = camposInforme.querySelectorAll("input");
+
+        if (this.checked) {
+          camposInforme.style.display = "block";
+          inputs.forEach(input => input.disabled = false);
+        } else {
+          camposInforme.style.display = "none";
+          inputs.forEach(input => input.disabled = true);
+        }
+      });
+
+      // Inicializa el estado al cargar
+      checkbox.dispatchEvent(new Event('change'));
+    });
+  });
 </script>
 {% endblock %}

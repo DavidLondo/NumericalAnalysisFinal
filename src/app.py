@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from methods import *
 import sympy as sp
 import math
+import numpy as np
 
 app = Flask(__name__)
 
@@ -275,8 +276,49 @@ def capitulo_2():
 
 @app.route("/capitulo-3", methods=["GET", "POST"])
 def capitulo_3():
-    resultado_vandermonde = resultado_newton = None
-    error_vandermonde = error_newton = None
+    def pol_to_str(coef):
+        grado = len(coef)
+        # Transform coef to string eg. a*x^3 + b*x^2 + c*x + d
+        str_coef = [f"{coef[i]}*x^{grado - i - 1}" for i in range(grado) if coef[i] != 0]
+        str_coef = [s.replace("*x^1", "*x") for s in str_coef]
+        str_coef = [s.replace("*x^0", "") for s in str_coef]
+        for i in range(len(str_coef) - 1):
+            if not str_coef[i + 1].startswith("-"):
+                str_coef[i] += " +"
+        return " ".join(str_coef)
+
+    def generar_informe_comparativo(x, y, x_real, y_real):
+        metodos = {
+            "Vandermonde": vandermonde,
+            "Newton": newtoninter,
+            "Lagrange": lagrange
+        }
+        informe = {}
+        errores = {}
+        for nombre, funcion in metodos.items():
+            try:
+                resultado = funcion(x, y)
+                # Transformar polinomio a coeficientes para evaluar en x_real
+                coef = resultado['solucion']
+
+                y_estimado = np.polyval(coef, x_real)
+                error = abs(y_real - y_estimado)
+                informe[nombre] = {
+                    "solucion": resultado['solucion'],
+                    "error_validacion": error,
+                    "y_estimado": y_estimado
+                }
+                errores[nombre] = error
+
+            except Exception as e:
+                informe[nombre] = {"error": str(e)}
+                errores[nombre] = float('inf')
+
+        mejor = min(errores.items(), key=lambda x: x[1], default=("Ninguno", None))[0]
+        return informe, mejor
+
+    resultado_vandermonde = resultado_newton = resultado_lagrange = None
+    error_vandermonde = error_newton = error_lagrange = None
     informe = mejor_metodo = None
     metodo_actual = "vandermonde"
 
@@ -289,32 +331,46 @@ def capitulo_3():
 
             if metodo == "vandermonde":
                 resultado_vandermonde = vandermonde(vector_x, vector_y)
+                resultado_vandermonde['solucion'] = pol_to_str(resultado_vandermonde['solucion'])
                 if request.form.get("generar_informe"):
-                    # informe, mejor_metodo = generar_informe_comparativo(A, b, x0, tol)
-                    # print("informe:", informe)
-                    # print("mejor_metodo:", mejor_metodo)
-                    print("informe:")
+                    x_real = float(request.form.get("x_real", 0))
+                    y_real = float(request.form.get("y_real", 0))
+                    informe, mejor_metodo = generar_informe_comparativo(vector_x, vector_y, x_real, y_real)
             
             elif metodo == "newtoninter":
                 resultado_newton = newtoninter(vector_x, vector_y)
+                resultado_newton['solucion'] = pol_to_str(resultado_newton['solucion'])
                 if request.form.get("generar_informe"):
-                    # informe, mejor_metodo = generar_informe_comparativo(A, b, x0, tol)
-                    # print("informe:", informe)
-                    # print("mejor_metodo:", mejor_metodo)
-                    print("informe:")
+                    x_real = float(request.form.get("x_real", 0))
+                    y_real = float(request.form.get("y_real", 0))
+                    informe, mejor_metodo = generar_informe_comparativo(vector_x, vector_y, x_real, y_real)
+            
+            elif metodo == "lagrange":
+                resultado_lagrange = lagrange(vector_x, vector_y)
+                resultado_lagrange['solucion'] = pol_to_str(resultado_lagrange['solucion'])
+                if request.form.get("generar_informe"):
+                    x_real = float(request.form.get("x_real", 0))
+                    y_real = float(request.form.get("y_real", 0))
+                    informe, mejor_metodo = generar_informe_comparativo(vector_x, vector_y, x_real, y_real)
 
         except Exception as e:
             if metodo == "vandermonde":
                 error_vandermonde = str(e)
             elif metodo == "newtoninter":
                 error_newton = str(e)
+            elif metodo == "lagrange":
+                error_lagrange = str(e)
 
     return render_template("chapter3.html",
                             metodo_actual=metodo_actual,
                             resultado_vandermonde=resultado_vandermonde,
                             error_vandermonde=error_vandermonde,
                             resultado_newton=resultado_newton,
-                            error_newton=error_newton,)
+                            error_newton=error_newton,
+                            resultado_lagrange=resultado_lagrange,
+                            error_lagrange=error_lagrange,
+                            informe=informe,
+                            mejor_metodo=mejor_metodo)
 
 if __name__ == "__main__":
     app.run(debug=True)
