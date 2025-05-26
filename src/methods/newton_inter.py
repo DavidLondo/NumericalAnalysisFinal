@@ -28,22 +28,13 @@ def newtoninter(x, y):
         if i < n - 1:
             acum = np.convolve(acum, [1, -x[i]])
 
-    # Transform coef to string eg. a*x^3 + b*x^2 + c*x + d
-    str_coef = [f"{pol[i]}*x^{n-i-1}" for i in range(n) if pol[i] != 0]
-    # remove x^1 and x^0
-    str_coef = [s.replace("*x^1", "*x") for s in str_coef]
-    str_coef = [s.replace("*x^0", "") for s in str_coef]
-    for i in range(len(str_coef)-1):
-        if not str_coef[i+1].startswith("-"):
-            str_coef[i] += " +"
-
     # Generate the graphical representation
     xpol = np.linspace(min(x), max(x), 200)
     ypol = np.polyval(pol, xpol)
     imagen = generar_grafica_base64(x, y, xpol, ypol, "Interpolación - Newton")
 
     return {
-        "solucion": " ".join(str_coef),
+        "solucion": pol,
         "grafica": imagen,
         "tabla": tabla.tolist(),
     }
