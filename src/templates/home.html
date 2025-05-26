@@ -4,8 +4,45 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-    <h2>Selecciona el capítulo</h2>
-    <h3><a href="{{ url_for('capitulo_1') }}">Capítulo 1</a></h3>
-    <h3><a href="{{ url_for('capitulo_2') }}">Capítulo 2</a></h3>
-    <h3><a href="{{ url_for('capitulo_3') }}">Capítulo 3</a></h3>
+    <h2 style="text-align:center; margin-bottom: 2rem;">Selecciona el capítulo</h2>
+    <div class="cards-container">
+        <a href="{{ url_for('capitulo_1') }}" class="card-link">
+            <div class="card">
+                <h3>Capítulo 1</h3>
+                <p class="subtitle">Cálculo de raíces de ecuaciones no lineales</p>
+                <ul>
+                    <li>Bisección</li>
+                    <li>Regla falsa</li>
+                    <li>Punto fijo</li>
+                    <li>Newton</li>
+                    <li>Secante</li>
+                    <li>Raíces múltiples</li>
+                </ul>
+            </div>
+        </a>
+        <a href="{{ url_for('capitulo_2') }}" class="card-link">
+            <div class="card">
+                <h3>Capítulo 2</h3>
+                <p class="subtitle">Resolución de sistemas de ecuaciones lineales</p>
+                <ul>
+                    <li>Jacobi</li>
+                    <li>Gauss-Seidel</li>
+                    <li>SOR</li>
+                </ul>
+            </div>
+        </a>
+        <a href="{{ url_for('capitulo_3') }}" class="card-link">
+            <div class="card">
+                <h3>Capítulo 3</h3>
+                <p class="subtitle">Interpolación de datos</p>
+                <ul>
+                    <li>Vandermonde</li>
+                    <li>Newton interpolante</li>
+                    <li>Lagrange</li>
+                    <li>Spline lineal</li>
+                    <li>Spline cúbico</li>
+                </ul>
+            </div>
+        </a>
+    </div>
 {% endblock %}
