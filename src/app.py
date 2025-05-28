@@ -304,7 +304,7 @@ def capitulo_3():
                 y_estimado = np.polyval(coef, x_real)
                 error = abs(y_real - y_estimado)
                 informe[nombre] = {
-                    "solucion": coef,
+                    "solucion": pol_to_str(resultado['solucion']),
                     "error_validacion": error,
                     "y_estimado": y_estimado
                 }
@@ -334,7 +334,7 @@ def capitulo_3():
             error = abs(y_real - y_val)
 
             informe["Spline Lineal"] = {
-                "coeficientes_tramos": coef_splines,
+                "coeficientes_tramos": [pol_to_str(i) for i in coef_splines],
                 "error_validacion": error,
                 "y_estimado": y_val
             }
@@ -365,7 +365,7 @@ def capitulo_3():
             error = abs(y_real - y_val)
 
             informe["Spline Cúbico"] = {
-                "coeficientes_tramos": coef_splines,
+                "coeficientes_tramos": [pol_to_str(i) for i in coef_splines],
                 "error_validacion": error,
                 "y_estimado": y_val
             }
