@@ -39,7 +39,6 @@ def biseccion(fx, a, b, tol, iteramax=100):
         i = 1
         error = None
         x_ant = None
-        convergencia = False
 
         while i <= iteramax:
             xi = (a + b) / 2
@@ -65,7 +64,6 @@ def biseccion(fx, a, b, tol, iteramax=100):
 
             # Criterio de parada
             if f_xi == 0 or (error is not None and error < tol):
-                convergencia = True
                 break
 
             # Actualizar intervalo
@@ -76,13 +74,6 @@ def biseccion(fx, a, b, tol, iteramax=100):
 
             x_ant = xi
             i += 1
-
-        if not convergencia:
-            return {
-                "error": f"No se alcanzó la convergencia en {iteramax} iteraciones. Último error: {error:.6f}",
-                "ultimo_valor": xi,
-                "iteraciones_realizadas": i-1
-            }
 
         # ----------- GENERAR GRÁFICAS -----------
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
@@ -126,9 +117,7 @@ def biseccion(fx, a, b, tol, iteramax=100):
         return {
             "resultado": xi,
             "iteraciones": resultados,
-            "grafica_base64": image_base64,
-            "convergencia": convergencia,
-            "iteraciones_totales": i
+            "grafica_base64": image_base64
         }
 
     except sp.SympifyError:
